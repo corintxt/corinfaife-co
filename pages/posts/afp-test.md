@@ -15,3 +15,7 @@ TEST.
 What about embed with png?
 
 ![Grain barge chart](https://datawrapper.dwcdn.net/VYlV4/full.png "Grain barge chart")
+
+Try the same chart as a link:
+
+[![Grain barge chart](https://datawrapper.dwcdn.net/VYlV4/full.png)](https://www.datawrapper.de/_/VYlV4/)
