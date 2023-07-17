@@ -21,7 +21,7 @@ Data for this analysis was [processed using Python/Jupyter Notebooks](https://gi
 ### Migration is becoming more deadly over time
 
 * In 2022, 6 times as many migrants died or went missing crossing the US-Mexico border than in 2014.
-* As the number of migrants trying to cross the borded increased, so did the number of women and children -- with deadly results. Data from this period shows a dramatic increase in the number of women and children dying or disappearing at the border. In 2014 just 6 women and 2 children were recorded dying or disappearing. In 2022, 100 women and 29 children were lost trying to cross.
+* As the number of migrants trying to cross the border increased, so did the number of women and children -- with deadly results. Data from this period shows a dramatic increase in the number of women and children dying or disappearing at the border. In 2014 just 6 women and 2 children were recorded dying or disappearing. In 2022, 100 women and 29 children were lost trying to cross.
 
 [![Migrant deaths by demographic](https://datawrapper.dwcdn.net/hO8s5/full.png)](https://www.datawrapper.de/_/hO8s5/)
 
