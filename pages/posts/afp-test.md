@@ -9,7 +9,7 @@ author: You
 # AFP edit test
 
 
-## Deadly tragedies involving migrants crossing Mexico
+## Deadly tragedies involving migrants crossing Mexico to the US
 
 This analysis is based on [data](https://missingmigrants.iom.int/downloads) from the UN's International Organization for Migration (IOM). The dataset gives data for all regions of the world from 2014-present, but we are working with a [filtered dataset](https://github.com/corintxt/Data-test-AFP/blob/main/data/US-Mexico-missing-migrants.csv) containing data on migrants who died or went missing trying to cross the US-Mexico border.
 
