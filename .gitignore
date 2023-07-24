@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# package-lock (for vercel compatibility)
+package-lock.json
+
 # testing
 /coverage
 
