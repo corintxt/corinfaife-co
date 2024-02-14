@@ -83,6 +83,6 @@ As an example, running a search on ICRs coming from the Federal Railroad Adminis
 
 So: having found a reference to a relevant database, data collection project, or system of records through one of those three sources – _now what_?
 
-The short answer is that it’s time to [craft a FOIA request](https://www.nfoic.org/sample-foia-request-letters/#foireq) to ask for records contained in the system. The longer answer is that specific wording might be needed to receive these records in a format suitable for data analysis, which we’ll get into in part two of this blog series.
+The short answer is that it’s time to [craft a FOIA request](https://www.nfoic.org/sample-foia-request-letters/#foireq) to ask for records contained in the system. The longer answer is that specific wording might be needed to receive these records in a format suitable for data analysis, which we get into in [part two of this blog series](/posts/liberating-data-foia-2).
 
 In the meantime, all of the Data Liberation Project’s [previous records requests are online](https://www.data-liberation-project.org/requests/) if you’re looking for inspiration, and more information about the sleuthing process is available in the DLP’s [*Fathoming Federal Data*](https://docs.google.com/document/d/1PNNrsK0rYoue4cD2CZ9vtxr2Yoy5oD4dOSmcBXnIRAo/edit#heading=h.3iu31wp8lncp) guide.
