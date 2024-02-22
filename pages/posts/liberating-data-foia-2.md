@@ -3,7 +3,7 @@ title: Liberating data with FOIA, part 2
 date: 2024/2/14
 description: On FOIA-ing government databases
 tag: data, foia, investigations
-author: You
+author: Corin
 ---
 ![FOIA header image](/images/2024/FOIA-banner.jpg)
 

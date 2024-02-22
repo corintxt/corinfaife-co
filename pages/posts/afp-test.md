@@ -3,7 +3,7 @@ title: A data test
 date: 2023/7/17
 description: Demonstration charts and analysis
 tag: data, afp
-author: You
+author: Corin
 ---
 
 # AFP edit test

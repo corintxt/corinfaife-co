@@ -3,7 +3,7 @@ title: Ideas
 date: 2024/1/1
 description: General ideas.
 tag: draft
-author: You
+author: <NAME>
 ---
 
 # Ideas

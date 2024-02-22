@@ -3,7 +3,7 @@ title: Liberating data with FOIA, part 1
 date: 2024/2/13
 description: On finding government databases
 tag: data, foia, investigations
-author: You
+author: Corin
 ---
 ![Corin Faife Critical Reflections](/images/2024/CriticalReflections_CorinFaife.png)
 
