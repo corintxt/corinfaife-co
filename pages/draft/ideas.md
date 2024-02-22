@@ -10,3 +10,7 @@ author: You
 ## Draft ideas
 
 * Finding Trump and Biden campaign spending data
+
+--
+
+Make year folder for posts
