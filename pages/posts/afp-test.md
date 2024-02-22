@@ -1,7 +1,7 @@
 ---
-title: AFP data test
+title: A data test
 date: 2023/7/17
-description: Charts and analysis for data journalist edit test.
+description: Demonstration charts and analysis
 tag: data
 author: You
 ---
