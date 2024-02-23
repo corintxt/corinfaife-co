@@ -29,10 +29,9 @@ body {
   background: radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent) 25px 25px, linear-gradient(#f0f0fe 2px, transparent 2px) 0 -1px, linear-gradient(90deg, #f0f0fe 2px, #ffffff 2px) -1px 0;
   background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
 }
-/* .prose {
-  background-color: #ffffff;
-  opacity: .9;
-} */
+  /* <dark mode> */
+  /* background: radial-gradient(circle, transparent 20%, #111111 20%, #111111 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #111111 20%, #111111 80%, transparent 80%, transparent) 25px 25px, linear-gradient(#111111 2px, transparent 2px) 0 -1px, linear-gradient(90deg, #111111 2px, #111111 2px) -1px 0;   */
+
 
 b,
 strong,
