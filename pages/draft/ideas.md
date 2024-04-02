@@ -10,6 +10,8 @@ author: <NAME>
 ## Draft ideas
 
 * Finding Trump and Biden campaign spending data
+* Automated translation in Illustrator
+* Third party apps / Observable and the 'unified' interface
 
 --
 
