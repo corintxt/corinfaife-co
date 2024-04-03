@@ -1,6 +1,6 @@
 ---
 title: Some graphics work, 2024/Q1
-date: 2024/3/18
+date: 2024/4/3
 description: A dispatch from the first quarter of the year
 tag: data, graphics, afp
 author: Corin
