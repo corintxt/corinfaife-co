@@ -27,7 +27,7 @@ GitHub Actions is an automation platform for application building, testing and d
 
 The core of GitHub actions is a "workflow," a bit like a recipe that outlines the process by which a meal is cooked. The [GitHub documentation](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) explains that a **workflow** is a "configurable automated process that will run one or more jobs." **Jobs** are a set of steps that the workflow executes in order, after being triggered by an event. An **event** can be an action performed on the repo, like a code push or a pull request, or it can be a scheduled event, which is what I'll need to set up in the future.
 
-A workflow is executed by a **runner**, a virtual machine that is newly provisioned each time the workflow is run. This means effectively it's starting from scratch: everything required to execute the jobs (languages, dependencies etc.) needs to be defined in the worfklow file, as the environment will have to be installed each time.
+A workflow is executed by a **runner**, a virtual machine that is newly provisioned each time the workflow is run. This means effectively it's starting from scratch: everything required to execute the jobs (languages, dependencies etc.) needs to be defined in the workflow file, as the environment will have to be installed each time.
 
 Workflows must live in a directory named `.github/workflows/` inside a GitHub repo. The details of the workflow go into a YAML file, which GitHub will use to provision and configure the runner that's going to execute the workflow.
 
@@ -68,7 +68,7 @@ When I committed this to GitHub I got an error that the requirements.txt file di
 
 ![Requirements fail](/images/2024/requirements-fail.png)
 
-At first this seemed confusing, because I could see the `requirements.txt` file in the root folder of the directory. But I'd missed an implication of the fact that GitHub Actions have to be built from scratch: for the runner machine to have knowledge of any files in your repo, you need to *explicitly tell it to check out the code* from the repo first.
+At first this seemed confusing, because I could see the `requirements.txt` file in the root of the repo. But I'd missed an implication of the fact that GitHub Actions have to be built from scratch: for the runner machine to have knowledge of any files in your repo, you need to *explicitly tell it to check out the code* from the repo first.
 
 I modified the YAML file to include this instruction:
 
