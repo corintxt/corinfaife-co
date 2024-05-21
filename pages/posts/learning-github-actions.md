@@ -122,15 +122,19 @@ Then another confusion: when I ran the script on my laptop, it created a new dir
 
 I'd missed another important step: to modify the contents of the repo, the workflow needs to be instructed to make another commit. This seems obvious in retrospect, but I had been imagining that the relationship between GitHub workflow and GitHub repo was something like the working directory on my local machine (not so).
 
+### Learning 3: Specify git config
+
 So, commit the changes. The first commit I tried failed because I didn't specify the git username and email to associate with the commit – again, necessary because everything is being set up from scratch each time.
 
 ![Commit fail](/images/2024/commit-fail1.png)
+
+### Learning 4: Set permissions
 
 I added a username and email to the config and tried again. Then, the commit failed because of insufficient access permissions:
 
 ![Commit fail 2](/images/2024/commit-fail2.png)
 
-I fixed that with a new line in the YAML granting the workflow permission to write to the contents of the repo. 
+After consulting GitHub's documentation for [assigning permissions to jobs](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs), I added a new line in the YAML granting the fetch-save pipeline permission to write to the contents of the repo: 
 
 ```yaml
 on: [push]
