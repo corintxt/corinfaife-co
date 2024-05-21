@@ -120,7 +120,7 @@ Then another confusion: when I ran the script on my laptop, it created a new dir
 
 ![No data output](/images/2024/no-data-output.png)
 
-I'd missed another important step: to modify the contents of the repo, the workflow needs to be instructed to make another commit. This seems obvious in retrospect, but I had been imagining that the relationship between GitHub worfklow and GitHub repo was something like the working directory on my local machine (not so).
+I'd missed another important step: to modify the contents of the repo, the workflow needs to be instructed to make another commit. This seems obvious in retrospect, but I had been imagining that the relationship between GitHub workflow and GitHub repo was something like the working directory on my local machine (not so).
 
 So, commit the changes. The first commit I tried failed because I didn't specify the git username and email to associate with the commit – again, necessary because everything is being set up from scratch each time.
 
