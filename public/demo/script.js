@@ -59,7 +59,7 @@ function generateTable(data) {
         } else if (column === 'event_id') {
           const eventHash = row['event_hash'];
           i360 = 'http://iris-360.afp.com/event/'
-          table += `<td><a href="${i360 + eventHash}">${row[column]}</a></td>`;
+          table += `<td><a href="${i360 + eventHash}"  >${row[column]}</a></td>`;
          } else if (column === 'event_hash') {
           continue;
         } else if (column !== 'event_id' && column !== 'lat' && column !== 'lon') {
@@ -84,6 +84,87 @@ function generateTable(data) {
     link.addEventListener('click', openMapSidebar);
   }
 }
+
+// Function to generate the big map with markers
+let map;
+
+function generateMap() {
+  const mapContainer = document.getElementById('map-container');
+  mapContainer.style.display = 'flex';
+
+  if (map) {
+    map.remove(); // Remove the existing map instance if it exists
+  }
+
+  map = L.map('big-map').setView([39.8283, -98.5795], 4);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  const tableRows = document.querySelectorAll('#table-container table tr');
+
+  for (let i = 1; i < tableRows.length; i++) {
+    const row = tableRows[i];
+    const eventId = row.querySelector('td:nth-child(1)').textContent;
+    const candidate = row.querySelector('td:nth-child(2)').textContent;
+    const eventTitle = row.querySelector('td:nth-child(3)').textContent;
+    const city = row.querySelector('td:nth-child(4)').textContent;
+    const state = row.querySelector('td:nth-child(5)').textContent;
+    const date = row.querySelector('td:nth-child(6)').textContent;
+    const mapLink = row.querySelector('.map-link');
+
+    if (mapLink) {
+      const lat = parseFloat(mapLink.getAttribute('data-lat'));
+      const long = parseFloat(mapLink.getAttribute('data-long'));
+
+      if (!isNaN(lat) && !isNaN(long)) {
+        let markerColor;
+
+        if (candidate === 'TRUMP') {
+          markerColor = 'red';
+        } else if (candidate === 'BIDEN') {
+          markerColor = 'blue';
+        } else {
+          markerColor = 'gray';
+        }
+
+        const marker = L.circleMarker([lat, long], {
+          color: markerColor,
+          fillColor: markerColor,
+          fillOpacity: 1,
+          radius: 5
+        }).addTo(map);
+
+        const popupContent = `
+          <strong>Event ID:</strong> ${eventId}<br>
+          <strong>Event Title:</strong> ${eventTitle}<br>
+          <strong>City:</strong> ${city}<br>
+          <strong>State:</strong> ${state}<br>
+          <strong>Date:</strong> ${date}
+        `;
+
+        marker.bindPopup(popupContent);
+        // marker.on('mouseover', function (e) {
+        //     this.openPopup();
+        // });
+        // marker.on('mouseout', function (e) {
+        //     this.closePopup();
+        // });
+      }
+    }
+  }
+}
+
+// // Function to clear the map
+// function clearMap() {
+//   const mapContainer = document.getElementById('map-container');
+//   mapContainer.style.display = 'none';
+
+//   const map = document.getElementById('big-map');
+//   map.innerHTML = '';
+// }
+
 
 // Function to open the map sidebar
 function openMapSidebar(event) {
@@ -147,6 +228,7 @@ function generateCandidateFilter(data) {
     const startDate = new Date(dateRangeStart.value);
     const endDate = new Date(dateRangeEnd.value);
     filterTableByCandidateAndDateRange(selectedCandidate, startDate, endDate);
+    // clearMap();
   });
 }
 
@@ -213,6 +295,7 @@ function handleDateRangeChange() {
   } else {
     // Otherwise, update the table view
     filterTableByCandidateAndDateRange(selectedCandidate, startDate, endDate);
+    // clearMap();
   }
 }
 
@@ -416,3 +499,19 @@ document.getElementById('viewTopStatesBtn').addEventListener('click', function()
   document.getElementById('viewEventsBtn').addEventListener('click', function() {
     displayTable();
   });
+
+// Event listener for the "View Map" button
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('viewMapBtn').addEventListener('click', function() {
+    generateMap();
+  });
+});
+
+// Event listener to close the map when clicking outside the map
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('map-container').addEventListener('click', function(event) {
+    if (event.target === this) {
+      this.style.display = 'none';
+    }
+  });
+});
