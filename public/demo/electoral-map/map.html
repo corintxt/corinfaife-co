@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>US States Map with Electoral Votes</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Electoral College Vote Map</h1>
+    </header>
+    <div id="content">
+      <div style="display: flex;">
+        <div id="stateList"></div>
+        <div id="mapContainer">
+          <div id="buttonContainer">
+            <button id="downloadMapButton">Download Map</button>
+            <button id="downloadChartButton">Download Chart</button>
+            <label for="showElectoralCheckbox">
+              <input type="checkbox" id="showElectoralCheckbox" checked> Show Electoral College
+            </label>
+          </div>
+          <div id="barChart"></div>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="electoralscript.js"></script>
+  </body>
+</html>
