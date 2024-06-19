@@ -45,6 +45,13 @@ showElectoralCheckbox.on("change", function() {
   const showElectoral = this.checked;
   voteCircles.selectAll("circle").style("display", showElectoral ? null : "none");
 });
+
+// Add event listener to the state postal code checkbox
+const showPostalCheckbox = d3.select("#showPostalCheckbox");
+showPostalCheckbox.on("change", function() {
+  const showPostal = this.checked;
+  svg.selectAll(".state-initials").style("display", showPostal ? null : "none");
+});
   
 const statesPaths = svg.selectAll(".state")
     .data(states.features)
@@ -146,8 +153,8 @@ function sanitizeStateName(stateName) {
 
 // Generate the state list with radio buttons
 const stateList = d3.select("#stateList");
-const demColor = "#467bf7"
-const repColor = "#ff7575"
+const demColor = "#7ba3ff"
+const repColor = "#ed9797"
 
 // Sort the states alphabetically by name
 const sortedStates = filteredStates.sort((a, b) => a.properties.name.localeCompare(b.properties.name));
