@@ -12,6 +12,18 @@ const svg = mapContainer
   .attr("width", width)
   .attr("height", height);
 
+const mapGroup = svg.append("g");
+
+const zoom = d3.zoom()
+  .scaleExtent([1, 8])
+  .on("zoom", zoomed);
+
+svg.call(zoom);
+
+function zoomed(event) {
+  mapGroup.attr("transform", event.transform);
+}
+
 const projection = d3.geoAlbersUsa()
   .scale(1000)
   .translate([width / 2, height / 2]);
@@ -53,7 +65,7 @@ showPostalCheckbox.on("change", function() {
   svg.selectAll(".state-initials").style("display", showPostal ? null : "none");
 });
   
-const statesPaths = svg.selectAll(".state")
+const statesPaths = mapGroup.selectAll(".state")
     .data(states.features)
     .enter()
     .append("path")
@@ -64,7 +76,7 @@ const statesPaths = svg.selectAll(".state")
     .text(d => `${d.properties.name}: ${d.properties.electoral_votes} electoral votes`);
 
     // Add state initials
-    svg.selectAll(".state-initials")
+    mapGroup.selectAll(".state-initials")
     .data(states.features)
     .enter()
     .append("text")
@@ -74,7 +86,7 @@ const statesPaths = svg.selectAll(".state")
     .text(d => `${d.properties.postal}`);
     // .text("BB")
 
-    const voteCircles = svg.selectAll(".vote-circle")
+  const voteCircles = mapGroup.selectAll(".vote-circle")
   .data(states.features)
   .enter()
   .append("g")
@@ -227,8 +239,10 @@ const barChartData = [
     { party: "R", votes: rVotes }
 ];
 
-    const xScale = d3.scaleLinear()
-    .domain([0, d3.max(barChartData, d => d.votes)])
+const maxVotes = 290;
+
+  const xScale = d3.scaleLinear()
+    .domain([0, maxVotes])
     .range([0, barChartWidth - barChartMargin.left - barChartMargin.right]);
 
   const yScale = d3.scaleBand()
@@ -281,6 +295,36 @@ const barChartData = [
     .attr("alignment-baseline", "middle")
     .style("font-size", "12px")
     .text(d => d.votes);
+
+    const markerValue = 270;
+
+    const markerLine = barChart.selectAll(".marker-line")
+      .data([markerValue]);
+  
+    markerLine.enter()
+      .append("line")
+      .attr("class", "marker-line")
+      .merge(markerLine)
+      .attr("x1", xScale(markerValue))
+      .attr("y1", 0)
+      .attr("x2", xScale(markerValue))
+      .attr("y2", barChartHeight - barChartMargin.top - barChartMargin.bottom)
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4 4");
+  
+    const markerText = barChart.selectAll(".marker-text")
+      .data([markerValue]);
+  
+    markerText.enter()
+      .append("text")
+      .attr("class", "marker-text")
+      .merge(markerText)
+      .attr("x", xScale(markerValue))
+      .attr("y", -5)
+      .attr("text-anchor", "middle")
+      .style("font-size", "12px")
+      .text(markerValue);
 };
 
 
