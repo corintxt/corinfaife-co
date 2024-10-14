@@ -1,5 +1,5 @@
 ---
-title: Hurricane falsehoods "darker than a misinformation crisis"
+title: Hurricane lies and the misinformation crisis
 date: 2024-10-11
 tag: clippings, misinformation,
 author: Corin
