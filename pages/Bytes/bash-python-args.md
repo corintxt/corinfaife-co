@@ -1,6 +1,6 @@
 ---
 title: Bash script to execute Python with args
-date: 2024-10-14
+date: 2024-10-15
 tag: Python, bash
 author: Corin
 ---
