@@ -1,7 +1,7 @@
 ---
 title: Importing large CSV to SQLite
 date: 2024-10-10
-tag: intro
+tag: SQL, CSV
 author: Corin
 ---
 
