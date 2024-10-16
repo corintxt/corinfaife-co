@@ -1,6 +1,6 @@
 ---
 title: Switch off scientific notation in pandas
-date: 2024-10-15
+date: 2024-10-16
 tag: Python, pandas
 author: Corin
 ---
@@ -9,7 +9,7 @@ author: Corin
 
 By default pandas uses scientific notation to display large numbers of data type [*float*](https://realpython.com/python-data-types/#floating-point-numbers), ie. numbers with a decimal point (known as a floating point). 
 
-Most people find conventional notation easier to scan, so will want to switch to conventional notation.
+Most people find conventional notation easier to scan, so will want to switch.
 
 An example from [this answer on StackOverflow](https://stackoverflow.com/questions/21137150/format-suppress-scientific-notation-from-pandas-aggregation-results) shows that you can do this with the following code:
 
