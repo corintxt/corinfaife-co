@@ -97,7 +97,9 @@ plt.rcParams.update(
 ```
 Then we'll use `plt.suptitle()` ("supertitle") for the main heading, and `title()` for the subheading. 
 
-We need to set x and y values to position each of these correctly, though this can be confusing because each one uses a different reference system – `suptitle()` needs a y value of 1 or greater to appear at the top of the chart, whereas `title()` is at the top by default:
+We need to set x and y values to position each of these correctly, though this can be confusing because each one uses a different reference system: `suptitle()` needs a y value of 1 or greater to appear at the top of the chart, whereas `title()` is at the top by default, and takes a `pad` argument to control vertical spacing. 
+
+Both should be horizontally aligned left rather than centered, which we set with the `ha` argument.
 
 ```
 plt.suptitle("US election turnout",
@@ -111,8 +113,7 @@ plt.title("Voter turnout in the 2024 election was still among the highest since 
           pad=15,
           fontsize=10,
           fontweight='semibold',
-          ha='left',
-          )
+          ha='left')
 ```
 Lastly we use `plt.figtext()` to add a footnote with the source. As with `suptitle()`, we're giving [x,y] positioning coordinates from the bottom left of the figure.
 ```
