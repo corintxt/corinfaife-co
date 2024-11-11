@@ -1,16 +1,16 @@
 ---
-title: Matplotlib styling tips
+title: Styling matplotlib for news production
 date: 2024-11-12
-description: Adventures in MDX
+description: Taking charts from raw to refined
 tag: Python, dataviz, matplotlib
 author: Corin
 ---
 
-# Some matplotlib styling tips
+# Styling matplotlib for news production
 
-As a data journalist at AFP, my workflow often involves using Python for data analysis and exploratory visualization, then handing over the results to a graphic designer as an SVG file to be finished for publication. 
+As a data journalist at [AFP](https://www.afp.com/en), my daily workflow often uses Python for data analysis and exploratory visualization, then finishes by handing over an SVG to a graphic designer to be refined for publication. 
 
-I've slowly been making tweaks to the matplotlib styling to reduce the gap between what I hand over and a publishable graphic in AFP house style. 
+As time goes on, I've been learning how to tweak [Matplotlib](https://matplotlib.org/) styling to reduce the gap between what I export and a publishable (or near-publishable) graphic in our AFP house style. 
 
 So we can go from this:
 
@@ -21,15 +21,17 @@ To this:
 
 ![AFP styled election chart](/images/2024/chart/election-turnout-afp.svg)
 
-Here's a breakdown of the styling tweaks needed.
+Though matplotlib charts look very dry and academic out-of-the-box, I'm slowly coming to appreciate the level of control and flexibility available underneat the hood.
 
-### Set chart size and line width
+Here's a breakdown of the styling tweaks I'm currently using.
+
+### Set chart dimensions and line width
 AFP's two-column graphic layout corresponds to a 6x4 image ratio, which we define before drawing the chart:
 
 ```python
 plt.figure(figsize=(6, 4))
 ```
-We'll then draw a simple line chart following the example above –– US voter turnout over time. When we draw the chart we'll want to increase the line width slightly.
+We'll then draw a simple line chart following the example above –– US voter turnout over time. When we draw the chart we'll want to increase the line width slightly:
 ```
 plt.plot(df['YEAR'],
          df['TURNOUT_RATE_PRES'],
@@ -42,7 +44,7 @@ plt.plot(df['YEAR'],
 
 We're going to do a lot of the chart styling by modifying attributes of the [Axes object](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes).
 
-First we call the `.gca()` function to *get current axes* of the plot and assign the reference to a variable. We can then use various methods of the [axes api](https://matplotlib.org/stable/api/axes_api.html) to modify plot characteristics, like setting the frame on or off:
+First we call the `.gca()` function to *get current axes* of the plot and assign that to a variable. We can then use various methods of the [axes api](https://matplotlib.org/stable/api/axes_api.html) to modify plot characteristics – like setting the frame on or off.
 
 ```
 ax = plt.gca()
@@ -51,12 +53,12 @@ ax.set_frame_on(False)
 
 ![AFP election chart 2](/images/2024/chart/election-turnout-2.svg)
 
-We're also going to override the default Y axis limits to make sure that we have a value marker above the highest value and below the lowest value of the line. 
+We're also going to override the default y axis limits to make sure that we have a value tick above the highest value and below the lowest value of the line. 
 
 ```
 ax.set_ylim([0.44, 0.75])
 ```
-While we're working on the Y axis, we'll also want to change the decimal score to a percentage. We do this by first getting a reference to the Y ticks, then using Python's `format()` function to [display the decimal string as percent](https://stackoverflow.com/questions/5306756/how-to-print-a-percentage-value).
+While we're working on the y axis, we'll also want to change the decimal score to a percentage. We do this by first getting a reference to the y ticks, then using Python's `format()` function to [display the decimal string as percent](https://stackoverflow.com/questions/5306756/how-to-print-a-percentage-value).
 
 ```
 ticks = ax.get_yticks()
@@ -65,7 +67,7 @@ ax.set_yticklabels(['{:,.0%}'.format(x) for x in ticks])
 ![AFP election chart 3](/images/2024/chart/election-turnout-3.svg)
 
 ### Style grid lines and ticks
-AFP line charts and column charts generally use dashed full-width grid lines on the Y axis of the chart. 
+AFP line charts and column charts generally use dashed full-width grid lines on the y axis of the chart. 
 
 First we'll switch off the y axis ticks, and tuck the x axis ticks closer to the chart. Then we'll [draw a full width custom grid line](https://e2eml.school/matplotlib_ticks#grid) in grey:
 
@@ -83,9 +85,9 @@ ax.grid(axis="y",
 
 ### Define title, subtitle, and footnote
 
-AFP charts dispaly a title, usually a subheading, and always include a source attribution. 
+AFP charts are titled, usually use a subheading, and always include source attribution. 
 
-To approximate the house style we can use matplotlib's [rcParams](https://matplotlib.org/stable/api/matplotlib_configuration_api.html#default-values-and-styling) settings to choose a font, in this case Adobe's [Source Sans](https://fonts.adobe.com/fonts/source-sans). We'll also set `svg.fonttype` to `none`, which instructs matplotlib not to convert text into paths when saving an SVG.
+To match the house style we can use matplotlib's [rcParams](https://matplotlib.org/stable/api/matplotlib_configuration_api.html#default-values-and-styling) settings to choose a font, in this case Adobe's [Source Sans](https://fonts.adobe.com/fonts/source-sans). We'll also set `svg.fonttype` to `none`, which instructs matplotlib not to convert text into paths when saving an SVG.
 
 ```
 plt.rcParams.update(
@@ -93,7 +95,7 @@ plt.rcParams.update(
                 "svg.fonttype": 'none'
                 })
 ```
-Then we'll use `plt.suptitle()` ('super title') for the main heading, and `title()` for the subheading. 
+Then we'll use `plt.suptitle()` ("supertitle") for the main heading, and `title()` for the subheading. 
 
 We need to set x and y values to position each of these correctly, though this can be confusing because each one uses a different reference system – `suptitle()` needs a y value of 1 or greater to appear at the top of the chart, whereas `title()` is at the top by default:
 
@@ -124,6 +126,6 @@ And here's the finished result again:
 
 ![AFP election chart final](/images/2024/chart/election-turnout-afp-final.svg)
 
-For complete code to draw this chart, see [this GitHub gist](https://gist.github.com/corintxt/71e691b9a7d5f677e3630a15af46361b).
+For complete code to replicate this chart, see [this GitHub gist](https://gist.github.com/corintxt/71e691b9a7d5f677e3630a15af46361b).
 
 <script src="https://gist.github.com/corintxt/71e691b9a7d5f677e3630a15af46361b.js"></script>
