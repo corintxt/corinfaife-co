@@ -46,20 +46,20 @@ async function generate_bytes() {
     feed_url: 'https://corinfaife.co/bytes.xml'
   })
 
-  const posts = await fs.readdir(path.join(__dirname, '..', 'pages', 'bytes'))
+  const posts = await fs.readdir(path.join(__dirname, '..', 'pages', 'Bytes'))
   const allPosts = []
   await Promise.all(
     posts.map(async (name) => {
       if (name.startsWith('index.')) return
 
       const content = await fs.readFile(
-        path.join(__dirname, '..', 'pages', 'bytes', name)
+        path.join(__dirname, '..', 'pages', 'Bytes', name)
       )
       const frontmatter = matter(content)
 
       allPosts.push({
         title: frontmatter.data.title,
-        url: '/bytes/' + name.replace(/\.mdx?/, ''),
+        url: '/Bytes/' + name.replace(/\.mdx?/, ''),
         date: frontmatter.data.date,
         description: frontmatter.data.description,
         categories: frontmatter.data.tag.split(', '),
