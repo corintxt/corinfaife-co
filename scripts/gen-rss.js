@@ -39,43 +39,4 @@ async function generate_blog() {
   await fs.writeFile('./public/feed.xml', feed.xml({ indent: true }))
 }
 
-async function generate_bytes() {
-  const feed = new RSS({
-    title: 'Bytes | corinfaife.co',
-    site_url: 'https://corinfaife.co',
-    feed_url: 'https://corinfaife.co/bytes.xml'
-  })
-
-  const posts = await fs.readdir(path.join(__dirname, '..', 'pages', 'Bytes'))
-  const allPosts = []
-  await Promise.all(
-    posts.map(async (name) => {
-      if (name.startsWith('index.')) return
-
-      const content = await fs.readFile(
-        path.join(__dirname, '..', 'pages', 'Bytes', name)
-      )
-      const frontmatter = matter(content)
-
-      allPosts.push({
-        title: frontmatter.data.title,
-        url: '/Bytes/' + name.replace(/\.mdx?/, ''),
-        date: frontmatter.data.date,
-        description: frontmatter.data.description,
-        categories: frontmatter.data.tag.split(', '),
-        author: frontmatter.data.author
-      })
-    })
-  )
-
-  allPosts.sort((a, b) => new Date(b.date) - new Date(a.date))
-  allPosts.forEach((post) => {
-      feed.item(post)
-  })
-  await fs.writeFile('./public/bytes.xml', feed.xml({ indent: true }))
-}
-
 generate_blog()
-generate_bytes()
-
-
