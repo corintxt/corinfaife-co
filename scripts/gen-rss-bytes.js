@@ -23,8 +23,9 @@ async function generate() {
 
       allPosts.push({
         title: frontmatter.data.title,
-        url: '/Bytes/' + name.replace(/\.mdx?/, ''),
+        url: '/bytes/' + name.replace(/\.mdx?/, ''),
         date: frontmatter.data.date,
+        description: frontmatter.data.description,
         categories: frontmatter.data.tag.split(', '),
         author: frontmatter.data.author
       })
