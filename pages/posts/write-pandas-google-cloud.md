@@ -115,7 +115,7 @@ The code above is a flexible and readable way to achieve the goal, as it's clear
 
 First we need to install two more libraries:
 
-* [`fsscpec`](https://filesystem-spec.readthedocs.io/en/latest/) so that pandas can read from and write to remote file systems
+* [`fsspec`](https://filesystem-spec.readthedocs.io/en/latest/) so that pandas can read from and write to remote file systems
 * [`gcsfs`](https://pypi.org/project/gcsfs/) as a file system interface specifically for Google Cloud Storage
 
 Then all we need to do is:
