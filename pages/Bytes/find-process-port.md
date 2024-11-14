@@ -1,6 +1,6 @@
 ---
-title: Find and kill the process using a given port
-date: 2024-11-12
+title: Find and kill a process using a given port
+date: 2024/11/12
 tag: networking
 author: Corin
 ---
