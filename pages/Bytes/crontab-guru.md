@@ -7,7 +7,7 @@ author: Corin
 
 I don't use cron jobs regularly enough to know the syntax by heart.
 
-As a (primarily) Python programmer I'm used to thinking of time in terms of datetime objects and conversions. But instead of being geared towards calendar months and clock time, cron is made for scheduling tasks at regular intervals.
+As a (primarily) Python programmer I'm used to thinking of time in terms of datetime objects and conversions. But instead of being geared towards a linear progression of time, cron is made for scheduling repeated tasks at regular intervals.
 
 Cron job format consists of a string of five characters in a line separated by spaces, like so: `* * * * *`, with the values corresponding to minute, hour, day of the month, month, and day of the week.
 
