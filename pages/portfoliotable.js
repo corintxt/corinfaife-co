@@ -5,7 +5,7 @@ import JSONData from "../data/articles.json"
 const Portfolio = () => (
       <table>
         <tr>
-            <th><b>Date</b></th>
+            <th width="15%"><b>Date</b></th>
             <th><b>Title</b></th>
             <th><b>Publication</b></th>
         </tr>
