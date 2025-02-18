@@ -14,7 +14,6 @@ In February, I reported a story for AFP based on the Trump administration's new 
 
 
 
-
 ## Behind the reporting process
 
 ![Commit fail](/images/2024/commit-fail1.png)
