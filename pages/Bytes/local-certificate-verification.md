@@ -39,3 +39,5 @@ response = requests.post(api_url, data=data,
                                 verify='path/to/local/certificate')
 ```
 And the insecure verification warning disappeared.
+
+I'm not entirely sure why the API gave me a verification error in the first place, but this appeared to fix it.
