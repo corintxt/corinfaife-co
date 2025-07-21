@@ -15,4 +15,4 @@ author: <NAME>
 
 --
 
-Make year folder for posts
+Make year folder for posts.
