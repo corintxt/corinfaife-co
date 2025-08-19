@@ -33,7 +33,7 @@ The recent launch of GPT-5 by OpenAI was accompanied by two versions of [gpt-oss
 
 To run the model locally I first downloaded [Ollama](https://ollama.com/), a free tool for running LLMs on a local machine. (I was going to describe it as "an open source" tool, but there's some controversy over Ollama [failing to properly credit its dependencies](https://github.com/ollama/ollama/issues/3185) which I won't get into for now.)
 
-With Ollama installed I download the **20 billion paramater** version of gpt-oss with the terminal command:
+With Ollama installed I download the **20 billion parameter** version of gpt-oss with the terminal command:
 
 `ollama run gpt-oss`
 
