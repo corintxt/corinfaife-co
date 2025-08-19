@@ -8,8 +8,8 @@ author: Corin
 
 ![Ollama download](/images/2025/gpt/ollama.png)
 
-# Testing LLMs offline with Ollama
-## Discovering the pros, cons and trade-offs of the gpt-oss model
+# Testing the gpt-oss open weight model offline
+## Discovering the pros, cons and trade-offs of a small model
 
 Over the past few months I've been delivering some internal training for my employer, [AFP news](https://www.afp.com/en), to show reporters, photographers and videographers how they can **use LLMs for different journalistic purposes**.
 
