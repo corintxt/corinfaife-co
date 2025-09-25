@@ -1,8 +1,9 @@
 {
     "title": "Article Portfolio",
     "articles": [
-        {"date": "2025-02-06", "title": "India deportation flight likely cost US more than $1 mn","publication": "Yahoo News / AFP", "url": "https://www.barrons.com/news/india-deportation-flight-likely-cost-us-more-than-1-mn-0f0b7af3"},
-        {"date": "2025-02-03", "title": "Hundreds Of US Government Sites Go Offline","publication": "Barron's / AFP", "url": "https://www.barrons.com/news/hundreds-of-us-government-sites-go-offline-af5990a5"},
+        {"date": "2025-09-25", "title": "New York's finance sector faces risks from Trump visa crackdown","publication": "AFP | Japan Today", "url": "https://japantoday.com/category/business/new-york's-finance-sector-faces-risks-from-trump-visa-crackdown"},
+        {"date": "2025-02-06", "title": "India deportation flight likely cost US more than $1 mn","publication": "AFP | Barron's", "url": "https://www.barrons.com/news/india-deportation-flight-likely-cost-us-more-than-1-mn-0f0b7af3"},
+        {"date": "2025-02-03", "title": "Hundreds Of US Government Sites Go Offline","publication": "AFP | Barron's", "url": "https://www.barrons.com/news/hundreds-of-us-government-sites-go-offline-af5990a5"},
         {"date": "2023-05-18", "title": "Debt Collectors Want To Use AI Chatbots To Hustle People For Money","publication": "VICE", "url": "https://www.vice.com/en/article/bvjmm5/debt-collectors-want-to-use-ai-chatbots-to-hustle-people-for-money"},
         {"date": "2022-10-10", "title": "COVID misinfo is the biggest challenge for Twitter’s Birdwatch program, data shows", "publication": "The Verge", "url": "https://www.theverge.com/2022/10/10/23393021/twitter-birdwatch-covid-misinformation-data-analysis-misinformation-fact-check"},
         {"date": "2022-10-05", "title": "Seattle hacker gets probation for $250M Capital One data breach", "publication": "The Verge", "url": "https://www.theverge.com/2022/10/5/23389266/paige-thompson-seattle-hacker-probation-250m-capital-one-data-breach-amazon"},
