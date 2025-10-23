@@ -1,6 +1,7 @@
 {
     "title": "Article Portfolio",
     "articles": [
+        {"date": "2025-10-23", "title": "Flush with cash, US immigration agency expands weaponry and surveillance","publication": "AFP | France24", "url": "https://www.france24.com/en/live-news/20251023-flush-with-cash-us-immigration-agency-expands-weaponry-and-surveillance"},
         {"date": "2025-09-25", "title": "New York's finance sector faces risks from Trump visa crackdown","publication": "AFP | Japan Today", "url": "https://japantoday.com/category/business/new-york's-finance-sector-faces-risks-from-trump-visa-crackdown"},
         {"date": "2025-02-06", "title": "India deportation flight likely cost US more than $1 mn","publication": "AFP | Barron's", "url": "https://www.barrons.com/news/india-deportation-flight-likely-cost-us-more-than-1-mn-0f0b7af3"},
         {"date": "2025-02-03", "title": "Hundreds Of US Government Sites Go Offline","publication": "AFP | Barron's", "url": "https://www.barrons.com/news/hundreds-of-us-government-sites-go-offline-af5990a5"},
