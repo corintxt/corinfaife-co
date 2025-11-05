@@ -3,6 +3,10 @@ import Head from 'next/head'
 
 import '../styles/main.css'
 
+// Background pattern variants - uncomment one to use:
+import '../styles/bg-dots.css'
+// import '../styles/bg-blueprint.css'
+
 export default function Nextra({ Component, pageProps }) {
   return (
     <>
