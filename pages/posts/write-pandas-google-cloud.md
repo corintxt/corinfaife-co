@@ -47,7 +47,7 @@ This would be risky security protocol for any sensitive information, but is fine
 
 Back on my local machine, I needed to [install the Google Cloud CLI](https://cloud.google.com/sdk/docs/install), and then set up [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev) (ADC) with the command line tool:
 
-```
+```bash
 $ gcloud init
 $ gcloud auth application-default login
 ```
@@ -56,7 +56,7 @@ The point of ADC is to store a set of credentials that can be accessed by the en
 After that, I needed to install the relevant libraries to interface with the cloud storage using Python.
 
 First I installed the `google-cloud-storage` library into a new Conda environment (which is how I manage data journalism projects):
-```
+```bash
 $ conda create --name cloud
 $ conda install conda-forge::google-cloud-storage
 ```

@@ -15,6 +15,6 @@ This environment can then be activated by referencing the path to the environmen
 
 So the command to activate an environment by path might look like:
 
-```
+```bash
 conda activate /Users/Corin/Code/MyDataProject/.conda
 ```

@@ -15,7 +15,7 @@ To do this, first install the package with pip, then create a file in the projec
 
 Inside the file goes something like:
 
-```
+```toml
 API_KEY=my_secret_api_key
 ```
 
@@ -23,7 +23,7 @@ In your Python script, you can then call a `load_dotenv()` function to load ever
 
 This is accessed with `os.getenv("VARIABLE_NAME")`. E.g.:
 
-```
+```python
 from dotenv import load_dotenv
 import os
 

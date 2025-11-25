@@ -33,7 +33,7 @@ And exported a copy of the certificate. (For verification to work properly I nee
 
 Then, I replaced `verify=False` with a reference to the local copy of the certificate:
 
-```
+```python
 response = requests.post(api_url, data=data, 
                                 headers=headers, 
                                 verify='path/to/local/certificate')

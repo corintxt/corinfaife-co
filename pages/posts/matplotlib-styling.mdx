@@ -32,7 +32,7 @@ AFP's two-column graphic layout corresponds to a 6x4 image ratio, which we defin
 plt.figure(figsize=(6, 4))
 ```
 We'll then draw a simple line chart following the example above –– US voter turnout over time. When we draw the chart we'll want to increase the line width slightly:
-```
+```python
 plt.plot(df['YEAR'],
          df['TURNOUT_RATE_PRES'],
           linewidth=2)
@@ -46,7 +46,7 @@ We're going to do a lot of the chart styling by modifying attributes of the [Axe
 
 First we call the `.gca()` function to *get current axes* of the plot and assign that to a variable. We can then use various methods of the [axes api](https://matplotlib.org/stable/api/axes_api.html) to modify plot characteristics – like setting the frame on or off.
 
-```
+```python
 ax = plt.gca()
 ax.set_frame_on(False)
 ```
@@ -55,12 +55,12 @@ ax.set_frame_on(False)
 
 We're also going to override the default y axis limits to make sure that we have a value tick above the highest value and below the lowest value of the line. 
 
-```
+```python
 ax.set_ylim([0.44, 0.75])
 ```
 While we're working on the y axis, we'll also want to change the decimal score to a percentage. We do this by first getting a reference to the y ticks, then using Python's `format()` function to [display the decimal string as percent](https://stackoverflow.com/questions/5306756/how-to-print-a-percentage-value).
 
-```
+```python
 ticks = ax.get_yticks()
 ax.set_yticklabels(['{:,.0%}'.format(x) for x in ticks])
 ```
@@ -71,7 +71,7 @@ AFP line charts and column charts generally use dashed full-width grid lines on 
 
 First we'll switch off the y axis ticks, and tuck the x axis ticks closer to the chart. Then we'll [draw a full width custom grid line](https://e2eml.school/matplotlib_ticks#grid) in grey:
 
-```
+```python
 plt.tick_params(axis='y', left=False)
 plt.tick_params(axis='x', length=5, direction='in')
 
@@ -89,7 +89,7 @@ AFP charts are titled, usually use a subheading, and always include source attri
 
 To match the house style we can use matplotlib's [rcParams](https://matplotlib.org/stable/api/matplotlib_configuration_api.html#default-values-and-styling) settings to choose a font, in this case Adobe's [Source Sans](https://fonts.adobe.com/fonts/source-sans). We'll also set `svg.fonttype` to `none`, which instructs matplotlib not to convert text into paths when saving an SVG.
 
-```
+```python
 plt.rcParams.update(
                 {'font.family': 'Source Sans Pro',
                 "svg.fonttype": 'none'
@@ -101,7 +101,7 @@ We need to set x and y values to position each of these correctly, though this c
 
 Both should be horizontally aligned left rather than centered, which we set with the `ha` argument.
 
-```
+```python
 plt.suptitle("US election turnout",
              x=0.1,
              y=1.02,
@@ -116,7 +116,7 @@ plt.title("Voter turnout in the 2024 election was still among the highest since 
           ha='left')
 ```
 Lastly we use `plt.figtext()` to add a footnote with the source. As with `suptitle()`, we're giving [x,y] positioning coordinates from the bottom left of the figure.
-```
+```python
 plt.figtext(0.1, 0.01, 
             "Source: UF Election Lab", 
             ha="left", 
