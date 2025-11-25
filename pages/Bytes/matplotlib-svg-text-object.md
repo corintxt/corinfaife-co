@@ -11,7 +11,7 @@ By default, exporting a chart to SVG from the Python matplotlib library will ren
 
 To convert text into text objects (much easier for working with in for e.g. Adobe Illustrator), change matplotlib's RCParams to set svg.fonttype to 'none'. This tells matplotlib to render text as actual text elements instead of embedding them into the SVG as paths.
 
-```
+```python
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 

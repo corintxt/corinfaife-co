@@ -74,3 +74,34 @@ img.next-image {
 .nav-line .nav-link {
   color: #69778c;
 }
+
+/* Code block enhancements */
+pre[class*="language-"] {
+  border-radius: 8px;
+  padding: 1rem !important;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+code[class*="language-"] {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Inline code styling */
+:not(pre) > code {
+  background: #f5f5f5 !important;
+  color: #e01e5a !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* Ensure backticks don't show */
+:not(pre) > code::before,
+:not(pre) > code::after {
+  content: none !important;
+}
