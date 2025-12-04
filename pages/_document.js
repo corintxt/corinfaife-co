@@ -3,8 +3,8 @@ import { Html, Head, Main, NextScript } from 'next/document'
 export default function Document() {
   const meta = {
     title: 'Corin Faife | Journalist',
-    description: "Hi, I'm a reporter who uses code, data and graphics to tell stories.",
-    image: 'https://corinfaife.co/images/CF-BW.png'
+    description: "Telling stories with code, data and graphics.",
+    image: 'https://corinfaife.co/images/CF-3d-topo.png'
   }
 
   return (
