@@ -4,7 +4,7 @@ export default function Document() {
   const meta = {
     title: 'Corin Faife | Journalist',
     description: "Telling stories with code, data and graphics.",
-    image: 'https://corinfaife.co/images/CF-3d-topo.png'
+    image: 'https://corinfaife.co/images/CF-chart.png'
   }
 
   return (
