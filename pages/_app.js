@@ -1,5 +1,6 @@
 import 'nextra-theme-blog/style.css'
 import Head from 'next/head'
+import Script from 'next/script'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -9,6 +10,8 @@ import 'prismjs/themes/prism-tomorrow.css'
 // Background pattern variants - uncomment one to use:
 import '../styles/bg-dots.css'
 // import '../styles/bg-blueprint.css'
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export default function Nextra({ Component, pageProps }) {
   const router = useRouter()
@@ -35,6 +38,27 @@ export default function Nextra({ Component, pageProps }) {
 
   return (
     <>
+      {/* Google Analytics */}
+      {GA_MEASUREMENT_ID && (
+        <>
+          <Script
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          />
+          <Script
+            id="google-analytics"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}');
+              `,
+            }}
+          />
+        </>
+      )}
       <Head>
         <link
           rel="alternate"

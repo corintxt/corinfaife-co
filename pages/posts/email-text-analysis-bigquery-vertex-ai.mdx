@@ -132,7 +132,7 @@ LIMIT 1;
 
 Of course, what we really want to do is pass values from the fields of the data table *into* the prompt. 
 
-We can do that with the `CONCAT()` SQL function and the field(s) we want to reference. So here's an example query that would tell a joke about whatever creature is stored in the `animal` field:
+We can do that with the `CONCAT()` SQL function and the field(s) we want to reference. So assuming we had a table with a field named `animal_type`, here's a query that would tell a joke about whatever creature is stored in that field of each record:
 
 ```sql
 SELECT
@@ -145,7 +145,7 @@ FROM
       SELECT
         -- Use CONCAT() to join text and field value
         CONCAT('Tell me a joke about a ', animal_type, '.') AS prompt,
-        animal_type -- Passthrough column
+        animal_type -- Pass value through to results
       FROM
         `project.dataset.animals_table`
       LIMIT 5
