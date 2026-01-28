@@ -36,31 +36,6 @@ export default function Nextra({ Component, pageProps }) {
     }
   }, [router.asPath])
 
-  useEffect(() => {
-    // Force full reload for Fast Refresh to update markdown content
-    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-      let lastCompileTime = Date.now()
-
-      const checkForUpdates = () => {
-        const now = Date.now()
-        if (now - lastCompileTime > 100 && now - lastCompileTime < 5000) {
-          console.log('[Dev] Reloading page for markdown updates...')
-          window.location.reload()
-        }
-      }
-
-      // Listen for webpack HMR built event
-      if (module.hot) {
-        module.hot.addStatusHandler(status => {
-          if (status === 'idle') {
-            lastCompileTime = Date.now()
-            setTimeout(checkForUpdates, 150)
-          }
-        })
-      }
-    }
-  }, [])
-
   return (
     <>
       {/* Google Analytics */}
