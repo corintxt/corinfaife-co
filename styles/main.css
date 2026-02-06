@@ -105,3 +105,20 @@ code[class*="language-"] {
 :not(pre) > code::after {
   content: none !important;
 }
+
+/* Image captions */
+figure {
+  margin: 1.5rem 0;
+}
+
+figure img {
+  margin: 0;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
