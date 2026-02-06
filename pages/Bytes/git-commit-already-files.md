@@ -1,49 +1,41 @@
 ---
-title: Switch from conda to mamba
-date: 2025-3-17
-tag: python, conda, mamba, package management
+title: Push local git commits to pre-existing remote
+date: 2026-01-28
+tag: git, license, version control
 author: Corin
 ---
 
-# Switching from conda to mamba
+# Push local git commits to pre-existing remote repo
 
-Up until recently the AFP datavisualisation department has been using [Anaconda](https://www.anaconda.com/) to manage Python packages and environments. But we recently found out – via an unexpected email from their sales team! - that since AFP is an organization of more than 200 employees, we have to purchase a Business license to use it. 
+I had to look this up recently when pushing a local git repo to a remote repo on GitHub that I'd already set up with a `LICENSE.md` file that wasn't stored locally.
 
-We didn't previously realize this because of the confusing relationship between `conda`, which is an open-source package manager, and `Anaconda`, which is non-free software comprising conda *plus* additional package management services and a graphical interface. 
+Because the remote repo wasn't empty, I needed to rebase and allow unrelated histories to merge.
 
-Additionally, though `conda` is free to use, large companies are required to pay to install packages via the `default` channel (which is security audited by Anaconda), but *not* to install packages through conda that come from other sources like `conda-forge`.
-
-To make a long story short we want to get back into the unambiguously open-source ecosystem, so we're switching to [Mamba](https://mamba.readthedocs.io/en/latest/), a reimplementation of conda written in C++ that pulls from `conda-forge` packages.
-
-Luckily, once installed mamba works as a drop-in replacement for conda, meaning that it uses the same commands and syntax. 
-
-So to make the switch, first we install `mamba` in the base conda environment (downloading from `conda-forge` of course!)
-
+So, in the project directory, we first stage and commit local files:
+```bash
+git add .
+git commit -m "My local commit"
 ```
-conda install -n base -c conda-forge mamba
+Add the GitHub repository as a remote (replacing correct `REMOTE_URL` value):
+```bash
+git remote add origin <remote-url.git>
 ```
-
-Then we can use commands such as:
-
+Verify the remote was added correctly:
+```bash
+git remote -v
 ```
-# To install a package
-mamba install package
+Now: pull changes from the remote repository with `--rebase` and `--allow-unrelated-histories` flags:
 
-# To create a new environment
-mamba create -n new_env python
-
-# To activate an environment (including existing conda envs)
-mamba activate env_name
+```bash
+git pull --rebase origin main --allow-unrelated-histories
 ```
 
-I had no problem installing mamba, but ran into an error message:
 
-![mamba error](/images/2025/mambaerror.png)
+Because the remote repository has existing files, local and remote histories are unrelated. So this command pulls the remote's changes and allows a merge with your local project, rebasing the repo to create a linear history. It's effectively as if the remote files always existed, and local changes were made on top of them.
 
-As suggested in the error message, I first needed to initialize with:
+Finally, push the rebased local repo upstream to origin:
 
+```bash
+git push -u origin main
 ```
-eval "$(mamba shell hook --shell zsh)"
-```
-
-After that, the error disappeared, and I could activate and run all of my existing conda environments with mamba. Very convenient!
+All local files and the remote repository files should now be merged and synchronized. 
