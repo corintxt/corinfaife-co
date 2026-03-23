@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPERATION EPIC FURY — 8-BIT COST SIMULATOR</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+:root {
+  --bg: #0a0a1a; --green: #00ff44; --amber: #ffcc00;
+  --red: #ff4444; --blue: #4488ff; --white: #eeeeff; --dim: #555577;
+  --layout-max-w: 980px;
+}
+@media (min-width: 1100px) { :root { --layout-max-w: 1080px; } }
+@media (min-width: 1400px) { :root { --layout-max-w: 1360px; } }
+@media (min-width: 1700px) { :root { --layout-max-w: 1600px; } }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--white);
+  font-family: 'Press Start 2P', monospace; font-size: 8px;
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; image-rendering: pixelated; overflow-x: hidden;
+}
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
+  pointer-events: none; z-index: 9999;
+}
+header { width:100%; max-width:var(--layout-max-w); padding:10px 8px 4px; text-align:center; }
+.title {
+  font-size:13px; color:var(--amber);
+  text-shadow:0 0 10px var(--amber), 2px 2px 0 #884400;
+  letter-spacing:2px; margin-bottom:4px;
+}
+.subtitle { font-size:6px; color:var(--dim); margin-bottom:6px; }
+
+/* BUDGET */
+.budget-section {
+  width:100%; max-width:var(--layout-max-w); padding:5px 8px;
+  display:flex; align-items:center; gap:8px;
+  border:2px solid var(--amber); background:#0b0b22; margin-bottom:4px;
+}
+.budget-label { font-size:6px; color:var(--amber); white-space:nowrap; min-width:80px; }
+.budget-bar-wrap { flex:1; height:14px; background:#111133; border:2px solid #333366; overflow:hidden; }
+.budget-bar-fill { height:100%; background:linear-gradient(90deg,#00cc33 0%,#ffcc00 50%,#ff4444 100%); transition:width 0.3s; }
+.budget-value { font-size:7px; color:var(--green); white-space:nowrap; min-width:115px; text-align:right; }
+
+/* THREAT ALERT */
+.threat-bar {
+  width:100%; max-width:var(--layout-max-w); padding:4px 8px;
+  display:flex; align-items:center; gap:8px;
+  border:2px solid var(--red); background:#1a0808; margin-bottom:4px;
+}
+.threat-label { font-size:6px; color:var(--red); white-space:nowrap; min-width:80px; }
+.threat-bar-wrap { flex:1; height:10px; background:#110808; border:2px solid #442222; overflow:hidden; }
+.threat-bar-fill { height:100%; background:linear-gradient(90deg,#220000,#ff0000); transition:width 0.3s; }
+.threat-value { font-size:6px; color:var(--red); white-space:nowrap; min-width:115px; text-align:right; }
+
+/* MAIN LAYOUT */
+.main {
+  width:100%; max-width:var(--layout-max-w);
+  display:grid; grid-template-columns:160px 1fr 160px;
+  gap:4px; padding:0 8px;
+}
+.panel { display:flex; flex-direction:column; gap:3px; }
+.panel-title {
+  font-size:6px; padding-bottom:3px; margin-bottom:1px;
+  border-bottom:2px solid;
+}
+.panel-title.strike { color:var(--blue); border-color:var(--blue); }
+.panel-title.defense { color:var(--red); border-color:var(--red); }
+
+.munition-btn {
+  background:#0c0c28; border:2px solid #224;
+  padding:4px 3px; cursor:pointer;
+  transition:border-color 0.1s,background 0.1s;
+  display:flex; flex-direction:column; gap:2px;
+}
+.munition-btn:hover { border-color:var(--amber); background:#14142e; }
+.munition-btn:active { transform:scale(0.97); }
+.munition-btn.disabled { opacity:0.3; cursor:not-allowed; pointer-events:none; }
+.munition-btn.strike-btn:hover { border-color:var(--blue); }
+.munition-btn.defense-btn:hover { border-color:var(--red); }
+.mrow { display:flex; align-items:center; gap:4px; }
+.mname { font-size:4.5px; color:var(--white); line-height:1.6; }
+.mcost { font-size:4.5px; color:var(--green); }
+.mqty  { font-size:4.5px; color:var(--dim); }
+
+canvas#battlefield {
+  border:3px solid #224; display:block;
+  background:#0d0d2b; image-rendering:pixelated; width:100%; height:auto;
+  aspect-ratio: 620 / 360;
+}
+
+/* STATS */
+.stats-bar {
+  width:100%; max-width:var(--layout-max-w); padding:4px 8px;
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:4px; margin-top:4px;
+}
+.stat-box { border:2px solid #224; padding:4px; background:#0b0b1e; }
+.stat-label { font-size:4.5px; color:var(--dim); margin-bottom:3px; }
+.stat-val { font-size:6px; color:var(--amber); }
+.stat-val.red { color:var(--red); }
+
+.controls-row {
+  width:100%; max-width:var(--layout-max-w); display:flex; gap:5px;
+  padding:4px 8px 5px; justify-content:flex-end;
+}
+.ctrl-btn {
+  background:#111133; border:2px solid #336; color:var(--white);
+  font-family:'Press Start 2P',monospace; font-size:6px; padding:5px 8px; cursor:pointer;
+}
+.ctrl-btn:hover { border-color:var(--amber); color:var(--amber); }
+.ctrl-btn.danger:hover { border-color:var(--red); color:var(--red); }
+.ctrl-btn.primary {
+  background:#0a1a0a; border:2px solid var(--green); color:var(--green);
+  font-size:8px; padding:7px 14px;
+  box-shadow:0 0 8px rgba(0,255,68,0.3), inset 0 0 8px rgba(0,255,68,0.05);
+}
+.ctrl-btn.primary:hover {
+  background:#0d240d; border-color:#88ffaa; color:#88ffaa;
+  box-shadow:0 0 16px rgba(0,255,68,0.5), inset 0 0 12px rgba(0,255,68,0.1);
+}
+.ctrl-btn.primary.active {
+  background:#001a00; border-color:#ff4444; color:#ff4444;
+  box-shadow:0 0 12px rgba(255,68,68,0.5), inset 0 0 10px rgba(255,68,68,0.1);
+  animation:pulse-red 1s ease-in-out infinite;
+}
+@keyframes pulse-red {
+  0%,100% { box-shadow:0 0 12px rgba(255,68,68,0.4), inset 0 0 10px rgba(255,68,68,0.08); }
+  50%      { box-shadow:0 0 22px rgba(255,68,68,0.8), inset 0 0 16px rgba(255,68,68,0.18); }
+}
+
+.log-panel {
+  width:100%; max-width:var(--layout-max-w); border:2px solid #224;
+  background:#060612; height:50px; overflow-y:auto;
+  padding:3px 5px; margin:0 8px 8px;
+}
+.log-line { font-size:5px; color:var(--dim); line-height:1.9; white-space:nowrap; }
+.log-line.hi { color:var(--green); }
+
+/* BRIEFING MODAL */
+#briefing-overlay {
+  position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,0.88);
+  display:flex; align-items:center; justify-content:center;
+}
+#briefing-box {
+  background:#080818;
+  border:3px solid var(--amber);
+  box-shadow:0 0 40px rgba(255,204,0,0.25), inset 0 0 30px rgba(0,0,0,0.6);
+  max-width:600px; width:94%; padding:22px 26px 18px;
+  position:relative; overflow-y:auto; max-height:92vh;
+}
+#briefing-box::before {
+  content:''; position:absolute; inset:5px;
+  border:1px solid rgba(255,204,0,0.12); pointer-events:none;
+}
+.brief-title {
+  font-size:13px; color:var(--amber);
+  text-shadow:0 0 12px var(--amber), 2px 2px 0 #774400;
+  text-align:center; margin-bottom:3px; letter-spacing:2px;
+}
+.brief-sub { font-size:7px; color:var(--dim); text-align:center; margin-bottom:16px; }
+.brief-section { margin-bottom:13px; }
+.brief-section-title {
+  font-size:8px; margin-bottom:7px; padding-bottom:3px; border-bottom:1px solid;
+}
+.brief-section-title.blue  { color:var(--blue);  border-color:var(--blue); }
+.brief-section-title.red   { color:var(--red);   border-color:var(--red); }
+.brief-section-title.amber { color:var(--amber); border-color:var(--amber); }
+.brief-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:7px; }
+.brief-icon { font-size:16px; line-height:1; flex-shrink:0; width:22px; text-align:center; margin-top:1px; }
+.brief-text { font-size:7px; color:var(--white); line-height:2.1; }
+.brief-text span { color:var(--amber); }
+.brief-text .red { color:var(--red); }
+.brief-text .grn { color:var(--green); }
+.brief-table { width:100%; border-collapse:collapse; margin-top:2px; }
+.brief-table td { font-size:6px; padding:4px 6px; border:1px solid #1a1a33; line-height:1.9; }
+.brief-table tr:nth-child(odd)  td { background:#0c0c22; }
+.brief-table tr:nth-child(even) td { background:#080814; }
+.brief-table .cn { color:var(--amber); }
+.brief-table .cb { color:#88aaff; }
+.brief-table .cr { color:#ff8888; }
+.brief-table .cd { color:var(--dim); }
+#brief-start-btn {
+  display:block; width:100%; margin-top:14px;
+  background:#0a0a22; border:2px solid var(--amber);
+  color:var(--amber); font-family:'Press Start 2P',monospace;
+  font-size:10px; padding:12px; cursor:pointer; letter-spacing:1px;
+  transition:background 0.15s, box-shadow 0.15s;
+}
+#brief-start-btn:hover { background:#181800; box-shadow:0 0 18px rgba(255,204,0,0.4); }
+</style>
+</head>
+<body>
+
+<!-- BRIEFING MODAL -->
+<div id="briefing-overlay">
+  <div id="briefing-box">
+    <div class="brief-title">⚔ OPERATION EPIC FURY ⚔</div>
+    <div class="brief-sub">MISSION BRIEFING · CLASSIFIED · SOURCE: CSIS.ORG · MARCH 2026</div>
+
+    <div class="brief-section">
+      <div class="brief-section-title amber">📋 SITUATION</div>
+      <div class="brief-row">
+        <div class="brief-icon">🌍</div>
+        <div class="brief-text">The United States has launched <span>Operation Epic Fury</span> against Iran. You command the coalition's munitions budget. The first 6 days of real combat cost <span>$11.3 billion</span>. By Day 12: <span>$16.5 billion</span>. Every click spends real money from a <span>$20B starting budget</span>.</div>
+      </div>
+    </div>
+
+    <div class="brief-section">
+      <div class="brief-section-title blue">🚀 STRIKE MISSIONS — LEFT PANEL</div>
+      <div class="brief-row">
+        <div class="brief-icon">🎯</div>
+        <div class="brief-text">Click any weapon on the <span>LEFT PANEL</span> to strike enemy ground targets. Jets fly in from the right; ships fire from the left. Costs vary enormously — a <span>JDAM bomb costs $90K</span> while a <span>JASSM costs $3.55M</span>.</div>
+      </div>
+      <table class="brief-table">
+        <tr><td class="cn">TLAM Tomahawk</td><td class="cb">Ship-launched cruise</td><td class="cd">$3.5M · 319 fired at D+6</td></tr>
+        <tr><td class="cn">JASSM</td><td class="cb">Air-launched standoff</td><td class="cd">$3.55M · 786 fired</td></tr>
+        <tr><td class="cn">HARM / AARGM</td><td class="cb">Anti-radar missile</td><td class="cd">$1.5M · 414 fired</td></tr>
+        <tr><td class="cn">JSOW / SLAM-ER</td><td class="cb">Jet-dropped glide</td><td class="cd">$1.5M · 464 fired</td></tr>
+        <tr><td class="cn">ATACMS / PrSM</td><td class="cb">Ground launcher</td><td class="cd">$1.6M · 86 fired</td></tr>
+        <tr><td class="cn">JDAM</td><td class="cb">GPS-guided bomb</td><td class="cd">$90K · 1,292 dropped</td></tr>
+        <tr><td class="cn">LUCAS Drone</td><td class="cb">One-way attack drone</td><td class="cd">$35K · 100 launched</td></tr>
+      </table>
+    </div>
+
+    <div class="brief-section">
+      <div class="brief-section-title red">🛡 AIR DEFENSE — RIGHT PANEL</div>
+      <div class="brief-row">
+        <div class="brief-icon">☠</div>
+        <div class="brief-text">Press <span>▶ START WAVE</span> and Iranian <span class="red">ballistic missiles, cruise missiles &amp; drones</span> stream in from the right. Click the <span>RIGHT PANEL</span> to fire interceptors. Each weapon only engages targets it can physically destroy — check the table below.</div>
+      </div>
+      <table class="brief-table">
+        <tr><td class="cn">SM-3 IIA</td><td class="cr">Ballistic only</td><td class="cd">$28.5M/unit · 83 fired</td></tr>
+        <tr><td class="cn">THAAD</td><td class="cr">Ballistic only</td><td class="cd">$12.4M/unit · 158 fired</td></tr>
+        <tr><td class="cn">PAC-3 MSE</td><td class="cr">Ballistic only</td><td class="cd">$3.9M/unit · 139 fired</td></tr>
+        <tr><td class="cn">SM-2/6</td><td class="cr">Ballistic + Cruise</td><td class="cd">$5.3M/unit · 115 fired</td></tr>
+        <tr><td class="cn">AMRAAM</td><td class="cr">Cruise + Drone</td><td class="cd">$1.6M/unit · 108 fired</td></tr>
+        <tr><td class="cn">AIM-9X Sidewinder</td><td class="cr">Cruise + Drone</td><td class="cd">$600K/unit · 72 fired</td></tr>
+      </table>
+    </div>
+
+    <div class="brief-section">
+      <div class="brief-section-title amber">⚙ CONTROLS</div>
+      <div class="brief-row"><div class="brief-icon">▶</div><div class="brief-text"><span>START WAVE</span> — spawn incoming Iranian threats (waves escalate in size over time)</div></div>
+      <div class="brief-row"><div class="brief-icon">🤖</div><div class="brief-text"><span>AUTO STRIKE</span> — AI automatically fires strike weapons at ground targets</div></div>
+      <div class="brief-row"><div class="brief-icon">↺</div><div class="brief-text"><span>RESET</span> — restart with a fresh $20B budget and full munitions inventory</div></div>
+      <div class="brief-row"><div class="brief-icon">💡</div><div class="brief-text">The real war burned <span>$11.3B in just 6 days</span>. A $90K JDAM destroys the same target as a $3.5M Tomahawk. Manage your budget wisely — or run out of interceptors when the big wave hits.</div></div>
+    </div>
+
+    <button id="brief-start-btn" onclick="document.getElementById('briefing-overlay').style.display='none'; initAudio(); startMusic();">▶ &nbsp; BEGIN OPERATION</button>
+  </div>
+</div>
+
+<header>
+  <div class="title">⚔ OPERATION EPIC FURY ⚔</div>
+  <div class="subtitle">8-BIT COST SIMULATOR · DATA: CSIS.ORG · MARCH 2026</div>
+</header>
+
+<div class="budget-section">
+  <div class="budget-label">💰 BUDGET</div>
+  <div class="budget-bar-wrap"><div class="budget-bar-fill" id="budgetBar" style="width:100%"></div></div>
+  <div class="budget-value" id="budgetVal">$20,000,000,000</div>
+</div>
+
+<div class="threat-bar">
+  <div class="threat-label">☠ THREATS</div>
+  <div class="threat-bar-wrap"><div class="threat-bar-fill" id="threatBar" style="width:0%"></div></div>
+  <div class="threat-value" id="threatVal">0 INCOMING</div>
+</div>
+
+<div class="main">
+  <!-- STRIKE PANEL -->
+  <div class="panel">
+    <div class="panel-title strike">▶ STRIKE</div>
+    <div id="strikeList"></div>
+  </div>
+
+  <!-- CANVAS -->
+  <div>
+    <canvas id="battlefield" width="620" height="360"></canvas>
+  </div>
+
+  <!-- AIR DEFENSE PANEL -->
+  <div class="panel">
+    <div class="panel-title defense">🛡 AIR DEFENSE</div>
+    <div id="defenseList"></div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-box"><div class="stat-label">TOTAL SPENT</div><div class="stat-val" id="statSpent">$0</div></div>
+  <div class="stat-box"><div class="stat-label">STRIKES FIRED</div><div class="stat-val" id="statFired">0</div></div>
+  <div class="stat-box"><div class="stat-label">TARGETS HIT</div><div class="stat-val" id="statHits">0</div></div>
+  <div class="stat-box"><div class="stat-label">THREATS DOWNED</div><div class="stat-val" id="statDowned">0</div></div>
+  <div class="stat-box"><div class="stat-label">THREATS MISSED</div><div class="stat-val red" id="statMissed">0</div></div>
+</div>
+
+<div class="controls-row">
+  <button class="ctrl-btn danger" onclick="resetGame()">↺ RESET</button>
+  <button class="ctrl-btn" id="waveBtn" onclick="toggleWaves()">▶ START WAVE</button>
+  <button class="ctrl-btn primary" id="autoBtn" onclick="toggleAuto()">▶ AUTO STRIKE</button>
+  <button class="ctrl-btn" id="sfxBtn" onclick="toggleSfx()">♬ SFX</button>
+  <button class="ctrl-btn" id="musicBtn" onclick="toggleMusic()">♪ MUSIC</button>
+</div>
+<div class="log-panel" id="logPanel"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+// From CSIS Table 2: D+6 estimated munitions usage
+const STRIKE_MUNITIONS = [
+  { id:'tomahawk', name:'BGM-109\nTLAM',    short:'TLAM',     cost:3_500_000, icon:'missile_h', col:'#4488ff', launch:'ship',    qty:319,  totalCost:1_156_700_000 },
+  { id:'jassm',    name:'AGM-158\nJASSM',   short:'JASSM',    cost:3_550_000, icon:'missile_h', col:'#22ccff', launch:'jet',     qty:786,  totalCost:2_787_700_000 },
+  { id:'harm',     name:'AGM-88\nHARM',     short:'HARM',     cost:1_526_000, icon:'missile_h', col:'#ff8844', launch:'jet',     qty:414,  totalCost:631_600_000  },
+  { id:'jsow',     name:'AGM-154\nJSOW',    short:'JSOW',     cost:1_524_000, icon:'missile_h', col:'#ffcc44', launch:'jet',     qty:464,  totalCost:707_300_000  },
+  { id:'lucas',    name:'LUCAS\nDRONE',     short:'LUCAS',    cost:35_000,    icon:'drone',     col:'#44ffcc', launch:'ground',  qty:100,  totalCost:3_500_000    },
+  { id:'jdam',     name:'GBU-32\nJDAM',     short:'JDAM',     cost:90_000,    icon:'bomb',      col:'#88ff44', launch:'jet',     qty:1292, totalCost:116_300_000  },
+  { id:'atacms',   name:'ATACMS\nPrSM',     short:'ATACMS',   cost:1_629_000, icon:'missile_v', col:'#ff6622', launch:'launcher',qty:86,   totalCost:140_100_000  },
+];
+
+const DEFENSE_MUNITIONS = [
+  { id:'pac3',    name:'PAC-3\nMSE',        short:'PAC-3',    cost:3_898_000, icon:'missile_v', col:'#ffaa44', launch:'launcher', qty:139, totalCost:541_500_000,  interceptsBallistic:true,  interceptsCruise:false },
+  { id:'thaad',   name:'THAAD\nINTERCEPT', short:'THAAD',    cost:12_400_000,icon:'missile_v', col:'#ff44ff', launch:'launcher', qty:158, totalCost:1_959_200_000,interceptsBallistic:true,  interceptsCruise:false },
+  { id:'sm3',     name:'RIM-161\nSM-3',    short:'SM-3',     cost:28_528_000,icon:'missile_v', col:'#ff2288', launch:'ship',     qty:83,  totalCost:2_367_800_000,interceptsBallistic:true,  interceptsCruise:false },
+  { id:'sm26',    name:'RIM-174\nSM-2/6',  short:'SM-2/6',   cost:5_315_000, icon:'missile_v', col:'#cc44ff', launch:'ship',     qty:115, totalCost:611_200_000,  interceptsBallistic:true,  interceptsCruise:true  },
+  { id:'amraam',  name:'AIM-120\nAMRAAM',  short:'AMRAAM',   cost:1_600_000, icon:'missile_h', col:'#ff6666', launch:'jet',     qty:108, totalCost:172_800_000,  interceptsBallistic:false, interceptsCruise:true  },
+  { id:'sidewinder',name:'AIM-9X\nSIDEWNDR',short:'AIM-9X', cost:600_000,   icon:'missile_h', col:'#ffaaaa', launch:'jet',     qty:72,  totalCost:43_200_000,   interceptsBallistic:false, interceptsCruise:true  },
+];
+
+const ALL_MUNITIONS = [...STRIKE_MUNITIONS, ...DEFENSE_MUNITIONS];
+
+const STARTING_BUDGET = 20_000_000_000;
+const DAY6_TOTAL      = 11_300_000_000;
+
+let budget = STARTING_BUDGET;
+let totalSpent=0, totalFired=0, totalHits=0, totalDowned=0, totalMissed=0;
+let projectiles=[], threats=[], targets=[], clouds=[], stars=[];
+let autoRunning=false, autoTimer=null, autoDefenseTimer=null, waveRunning=false, waveTimer=null;
+let tick=0;
+let audioCtx=null, masterGain=null, sfxEnabled=true, musicEnabled=true;
+let musicSchedTimer=null, musicNextTime=0, musicStep=0;
+
+const canvas = document.getElementById('battlefield');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+const W=620, H=360;
+const GY = H * 0.67;
+
+// Stars & clouds
+for(let i=0;i<60;i++) stars.push({x:Math.random()*W, y:Math.random()*(GY*0.85), b:Math.random()});
+for(let i=0;i<5;i++)  clouds.push({x:Math.random()*W, y:28+Math.random()*80, w:40+Math.random()*65, spd:0.18+Math.random()*0.25});
+
+// ── PIXEL HELPER ─────────────────────────────────────────────────────────────
+function px(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(Math.round(x),Math.round(y),w,h); }
+
+// ── BACKGROUND ───────────────────────────────────────────────────────────────
+function drawSky(){
+  const g=ctx.createLinearGradient(0,0,0,GY);
+  g.addColorStop(0,'#03030f'); g.addColorStop(0.6,'#090920'); g.addColorStop(1,'#0d120d');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+}
+function drawStars(){
+  stars.forEach(s=>{
+    const tw=0.5+0.5*Math.sin(tick*0.0025+s.x*0.3);
+    ctx.fillStyle=`rgba(200,210,255,${tw*s.b})`;
+    ctx.fillRect(Math.round(s.x),Math.round(s.y),s.b>0.72?2:1,s.b>0.72?2:1);
+  });
+}
+function drawMountains(){
+  ctx.fillStyle='#0c0c16';
+  for(let i=0;i<10;i++){ const mx=i*80-20,mh=16+(i*29%20); ctx.beginPath();ctx.moveTo(mx,GY);ctx.lineTo(mx+38,GY-mh);ctx.lineTo(mx+76,GY);ctx.fill(); }
+  ctx.fillStyle='#101018';
+  for(let i=0;i<8;i++){ const mx=i*95-10,mh=26+(i*37%28); ctx.beginPath();ctx.moveTo(mx,GY+2);ctx.lineTo(mx+48,GY-mh);ctx.lineTo(mx+96,GY+2);ctx.fill(); }
+}
+function drawClouds(){
+  clouds.forEach(c=>{
+    c.x-=c.spd; if(c.x+c.w<0) c.x=W+c.w;
+    ctx.fillStyle='rgba(150,150,200,0.05)';
+    for(let bx=0;bx<c.w;bx+=8){
+      const ch=(Math.sin(bx*0.28+c.x*0.008)*0.5+0.5)*16+10;
+      ctx.fillRect(Math.round(c.x+bx),Math.round(c.y-ch),8,Math.round(ch));
+    }
+  });
+}
+function drawGround(){
+  px(0,GY,W,4,'#2a1a08'); px(0,GY+4,W,H-GY-4,'#1a1008');
+  for(let x=0;x<W;x+=16) px(x+(Math.floor(x/16)%2)*8,GY+3,8,2,'#352010');
+}
+
+// ── SPRITES ───────────────────────────────────────────────────────────────────
+function drawShip(x,y){
+  px(x,y+8,44,6,'#445566'); px(x+4,y+6,36,4,'#556677');
+  px(x+10,y,22,8,'#667788'); px(x+14,y-4,14,6,'#778899');
+  px(x+19,y-8,4,4,'#99aacc'); px(x+20,y-9,2,2,'#bbccee');
+  px(x+38,y+6,8,6,'#445566');
+  ctx.fillStyle='#445566'; ctx.beginPath();
+  ctx.moveTo(x+42,y+6); ctx.lineTo(x+50,y+10); ctx.lineTo(x+42,y+12); ctx.fill();
+  ctx.fillStyle='rgba(80,180,220,0.22)';
+  for(let i=0;i<5;i++) ctx.fillRect(x-i*9,y+12,5,2);
+}
+function drawLauncher(x,y){
+  px(x,y+12,36,10,'#556644'); px(x+4,y+8,14,8,'#667755');
+  for(let i=0;i<3;i++){ px(x+3+i*11,y+20,8,6,'#222'); px(x+5+i*11,y+22,4,4,'#444'); }
+  ctx.save(); ctx.translate(x+18,y+12); ctx.rotate(-0.52);
+  px(0,-18,6,20,'#778866'); px(1,-18,4,4,'#99aa88'); ctx.restore();
+}
+function drawJet(x,y,dir){
+  ctx.save();
+  if(dir<0){ ctx.translate(x+36,0); ctx.scale(-1,1); x=0; }
+  px(x+4,y+4,24,5,'#aabbcc'); px(x,y+5,6,3,'#99aabb'); px(x+26,y+5,8,3,'#bbccdd');
+  px(x+8,y+8,16,3,'#889baa'); px(x+10,y+1,12,3,'#778899');
+  px(x+22,y+2,8,5,'#44aacc'); px(x+24,y+3,4,3,'#66ccee');
+  ctx.fillStyle='#ff8800'; ctx.fillRect(x,y+5,4,3);
+  ctx.fillStyle='#ffcc44'; ctx.fillRect(x+1,y+6,2,1);
+  ctx.restore();
+}
+
+// Missile pointing RIGHT (horizontal)
+function drawMissileH(x,y,col){
+  ctx.fillStyle=col;
+  ctx.fillRect(x,y,14,4);
+  ctx.beginPath(); ctx.moveTo(x+14,y); ctx.lineTo(x+18,y+2); ctx.lineTo(x+14,y+4); ctx.fill();
+  ctx.fillRect(x,y-2,4,2); ctx.fillRect(x,y+4,4,2);
+  ctx.fillStyle='#ff6600'; ctx.fillRect(x-4,y+1,4,2);
+  ctx.fillStyle='#ffcc00'; ctx.fillRect(x-2,y+1,2,2);
+}
+// Missile pointing UP (vertical)
+function drawMissileV(x,y,col){
+  ctx.fillStyle=col;
+  ctx.fillRect(x,y,4,14);
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+2,y-5); ctx.lineTo(x+4,y); ctx.fill();
+  ctx.fillRect(x-2,y+10,2,4); ctx.fillRect(x+4,y+10,2,4);
+  ctx.fillStyle='#ff6600'; ctx.fillRect(x,y+14,4,5);
+  ctx.fillStyle='#ffcc00'; ctx.fillRect(x+1,y+15,2,3);
+}
+function drawBomb(x,y,col){
+  ctx.fillStyle=col;
+  ctx.fillRect(x,y,8,12); ctx.fillRect(x-2,y+4,12,5);
+  ctx.beginPath(); ctx.moveTo(x,y+12); ctx.lineTo(x+4,y+18); ctx.lineTo(x+8,y+12); ctx.fill();
+  ctx.fillRect(x-4,y+9,4,5); ctx.fillRect(x+8,y+9,4,5);
+}
+function drawDrone(x,y,col,t){
+  const bob=Math.sin(t*0.1)*1.5;
+  ctx.fillStyle=col;
+  ctx.fillRect(x+4,y+3+bob,12,5); ctx.fillRect(x,y+4+bob,20,3);
+  ctx.fillRect(x+7,y+7+bob,6,4); ctx.fillRect(x+5,y+10+bob,10,2);
+  ctx.fillStyle='#ff4444'; ctx.fillRect(x+13,y+4+bob,2,2);
+  ctx.fillStyle='rgba(100,220,200,0.3)';
+  ctx.fillRect(x-4,y+4+bob,5,2); ctx.fillRect(x+19,y+4+bob,5,2);
+}
+
+// Enemy missile — points LEFT (incoming), red/orange
+function drawEnemyMissile(x,y){
+  ctx.fillStyle='#ff2200';
+  // Body pointing left
+  ctx.fillRect(x-14,y-2,14,4);
+  // Nose on the LEFT
+  ctx.beginPath(); ctx.moveTo(x-14,y-2); ctx.lineTo(x-18,y); ctx.lineTo(x-14,y+2); ctx.fill();
+  // Fins on the right (tail)
+  ctx.fillRect(x-4,y-4,4,2); ctx.fillRect(x-4,y+2,4,2);
+  // Exhaust on right
+  ctx.fillStyle='#ff6600'; ctx.fillRect(x,y-1,4,2);
+  ctx.fillStyle='#ffcc00'; ctx.fillRect(x+1,y-1,2,2);
+}
+
+// Explosion
+function drawExplosion(x,y,fr,maxfr){
+  const t=fr/maxfr, r=Math.round(t*30);
+  const cols=['#ffff00','#ffaa00','#ff5500','#ff2200','#770000'];
+  for(let i=4;i>=0;i--){
+    const cr=r-i*4; if(cr<=0) continue;
+    ctx.fillStyle=cols[i];
+    for(let ex=-cr;ex<=cr;ex+=4)
+      for(let ey=-cr;ey<=cr;ey+=4)
+        if(ex*ex+ey*ey<=cr*cr) ctx.fillRect(x+ex,y+ey,4,4);
+  }
+  if(t<0.5){ ctx.fillStyle='#ffffff'; for(let a=0;a<10;a++){ const ang=(a/10)*Math.PI*2+t*3,d=r*1.2; ctx.fillRect(x+Math.cos(ang)*d,y+Math.sin(ang)*d,2,2); } }
+  if(t>0.4){ ctx.fillStyle=`rgba(70,70,70,${(t-0.4)*0.5})`; for(let a=0;a<6;a++){ const ang=(a/6)*Math.PI*2,d=r*0.7; ctx.fillRect(x+Math.cos(ang)*d,y+Math.sin(ang)*d,5,5); } }
+}
+
+// ── TARGETS (ground targets for strike missions) ──────────────────────────────
+const TGTYPES=[
+  {name:'RADAR',  col:'#ff6600',w:20,h:14},
+  {name:'BUNKER', col:'#887766',w:28,h:12},
+  {name:'DEPOT',  col:'#556644',w:24,h:16},
+  {name:'SITE',   col:'#776655',w:32,h:10},
+];
+function spawnTarget(){
+  if(targets.length>=7) return;
+  const t=TGTYPES[Math.floor(Math.random()*TGTYPES.length)];
+  targets.push({x:90+Math.random()*(W-180), y:GY-t.h-2, w:t.w, h:t.h, col:t.col, name:t.name, hit:false, hf:0});
+}
+function drawTarget(t){
+  if(t.hit) return;
+  ctx.fillStyle=t.col; ctx.fillRect(t.x,t.y,t.w,t.h);
+  ctx.fillStyle='#000'; ctx.fillRect(t.x+2,t.y+2,4,4); ctx.fillRect(t.x+t.w-6,t.y+2,4,4);
+  ctx.fillStyle='#ff4444'; ctx.font='5px "Press Start 2P"'; ctx.fillText(t.name,t.x,t.y-4);
+}
+
+// ── ENEMY THREAT SPAWNING ─────────────────────────────────────────────────────
+const THREAT_TYPES = [
+  { name:'BALLISTIC', col:'#ff2200', spd:1.8, isBallistic:true,  icon:'ballistic', pts:2 },
+  { name:'CRUISE',    col:'#ff6600', spd:2.2, isBallistic:false, icon:'cruise',    pts:1 },
+  { name:'DRONE',     col:'#ff4400', spd:1.5, isBallistic:false, icon:'drone',     pts:1 },
+];
+function spawnThreat(){
+  const t=THREAT_TYPES[Math.floor(Math.random()*THREAT_TYPES.length)];
+  // Start from the right edge at a random altitude
+  const y = t.isBallistic ? 20+Math.random()*60 : 60+Math.random()*120;
+  // Target: random point on our side (left portion of screen)
+  const tx = 10+Math.random()*180;
+  const ty = t.isBallistic ? GY-10+Math.random()*20 : GY-5+Math.random()*15;
+  threats.push({
+    ...t,
+    x: W+10, y,
+    tx, ty,
+    trail: [],
+    t: 0,
+    intercepted: false,
+    missed: false,
+    exploding: false, ef:0, emax:20,
+  });
+  updateThreatBar();
+}
+
+// ── FIRE MUNITION ─────────────────────────────────────────────────────────────
+function fireMunition(id, isDefense){
+  const m = ALL_MUNITIONS.find(x=>x.id===id);
+  if(!m||m.qty<=0) return;
+  if(budget<m.cost){ logMsg(`⛔ FUNDS LOW FOR ${m.short}`,'#ff4444'); return; }
+  budget-=m.cost; totalSpent+=m.cost; m.qty--;
+  if(!isDefense) totalFired++;
+
+  // For defense: find a live threat to intercept
+  let targetThreat = null;
+  if(isDefense){
+    // Pick a threat this interceptor can handle
+    const candidates = threats.filter(th=>!th.intercepted&&!th.exploding&&!th.missed&&
+      (m.interceptsBallistic&&th.isBallistic || m.interceptsCruise&&!th.isBallistic || 
+       (m.id==='sm26'||m.id==='amraam'||m.id==='sidewinder')));
+    if(!candidates.length){
+      logMsg(`⚠ NO VALID TARGET FOR ${m.short}`,'#ffcc00');
+      // Refund
+      budget+=m.cost; totalSpent-=m.cost; m.qty++;
+      updateUI(); return;
+    }
+    // Pick closest to our base
+    targetThreat = candidates.reduce((a,b)=>a.x<b.x?a:b);
+    targetThreat.intercepted = true; // mark as being intercepted
+  }
+
+  const tx = isDefense && targetThreat ? targetThreat.x : 80+Math.random()*(W-200);
+  const ty = isDefense && targetThreat ? targetThreat.y : GY-10-Math.random()*50;
+
+  let p = {
+    m, id, col:m.col, icon:m.icon, tx, ty,
+    spd: isDefense ? 5.5 : 3.5+Math.random(),
+    exploding:false, ef:0, emax:22,
+    trail:[], t:0, done:false,
+    origX:null, origY:null,
+    isDefense, targetThreat,
+    x:0, y:0,
+  };
+
+  // Starting position
+  if(m.launch==='ship'){
+    p.x=40; p.y=GY-28;
+  } else if(m.launch==='jet'){
+    p.jetPhase=true; p.jx=isDefense?W-20:W+20; p.jy=55+Math.random()*60;
+    p.x=p.jx+16; p.y=p.jy+6;
+  } else if(m.launch==='launcher'){
+    p.x=50+Math.random()*40; p.y=GY-26;
+  } else {
+    p.x=30+Math.random()*50; p.y=GY-4;
+  }
+
+  projectiles.push(p);
+  if(!isDefense && Math.random()<0.4) spawnTarget();
+  updateUI();
+  logMsg(`🚀 ${isDefense?'INTERCEPT':'STRIKE'}: ${m.short}  $${fmt(m.cost)}`, isDefense?'#ff6666':m.col);
+  if(isDefense) sfxLaunchDefense(); else sfxLaunchStrike();
+}
+
+// ── AUDIO ENGINE ──────────────────────────────────────────────────────────────
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.3;
+  masterGain.connect(audioCtx.destination);
+}
+
+function _tone(freq, t, dur, vol, type, dest){
+  if(!freq || !audioCtx) return;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type || 'square';
+  o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.linearRampToValueAtTime(vol, t + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.88);
+  o.connect(g); g.connect(dest || masterGain);
+  o.start(t); o.stop(t + dur);
+}
+
+function sfxLaunchStrike(){
+  if(!sfxEnabled || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = 'square';
+  o.frequency.setValueAtTime(200, t);
+  o.frequency.exponentialRampToValueAtTime(900, t + 0.14);
+  g.gain.setValueAtTime(0.28, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+  o.connect(g); g.connect(masterGain); o.start(t); o.stop(t + 0.18);
+}
+
+function sfxLaunchDefense(){
+  if(!sfxEnabled || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  [0, 0.06].forEach((off, i) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(440 + i * 220, t + off);
+    o.frequency.exponentialRampToValueAtTime(1760, t + off + 0.1);
+    g.gain.setValueAtTime(0.22, t + off); g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.12);
+    o.connect(g); g.connect(masterGain); o.start(t + off); o.stop(t + off + 0.14);
+  });
+}
+
+function sfxExplosion(){
+  if(!sfxEnabled || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  const len = Math.floor(audioCtx.sampleRate * 0.5);
+  const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'lowpass';
+  filt.frequency.setValueAtTime(1200, t); filt.frequency.exponentialRampToValueAtTime(80, t + 0.45);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+  src.connect(filt); filt.connect(g); g.connect(masterGain); src.start(t); src.stop(t + 0.55);
+  const o = audioCtx.createOscillator(), og = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(28, t + 0.3);
+  og.gain.setValueAtTime(0.55, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+  o.connect(og); og.connect(masterGain); o.start(t); o.stop(t + 0.35);
+}
+
+function sfxImpact(){
+  if(!sfxEnabled || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  [0, 0.13, 0.26].forEach(off => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(700, t + off); o.frequency.exponentialRampToValueAtTime(180, t + off + 0.11);
+    g.gain.setValueAtTime(0.4, t + off); g.gain.exponentialRampToValueAtTime(0.001, t + off + 0.13);
+    o.connect(g); g.connect(masterGain); o.start(t + off); o.stop(t + off + 0.16);
+  });
+}
+
+function sfxIntercept(){
+  if(!sfxEnabled || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  [440, 554.37, 659.25, 880].forEach((freq, i) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'square'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.18, t + i * 0.055); g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.055 + 0.09);
+    o.connect(g); g.connect(masterGain); o.start(t + i * 0.055); o.stop(t + i * 0.055 + 0.1);
+  });
+}
+
+// 8-bit soundtrack sequencer (A minor, 32-step loop)
+const MN = {
+  _:0, A2:110.00, E3:164.81, A3:220.00, B3:246.94,
+  C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00,
+  A4:440.00, B4:493.88, C5:523.25, D5:587.33, E5:659.25
+};
+const MS16 = 60 / 160 / 4; // sixteenth note at 160 BPM
+const MPATTERN = [
+  [MN.A4,MN.A2],[MN._,MN._],[MN.C5,MN._],[MN._,MN._],
+  [MN.E5,MN.E3],[MN._,MN._],[MN.D5,MN._],[MN.C5,MN._],
+  [MN.A4,MN.A3],[MN._,MN._],[MN.A4,MN._],[MN.G4,MN._],
+  [MN.F4,MN.E3],[MN._,MN._],[MN.E4,MN._],[MN._,MN._],
+  [MN.F4,MN.A2],[MN._,MN._],[MN.A4,MN._],[MN._,MN._],
+  [MN.C5,MN.E3],[MN._,MN._],[MN.A4,MN._],[MN.G4,MN._],
+  [MN.E4,MN.A2],[MN._,MN._],[MN.F4,MN._],[MN.E4,MN._],
+  [MN.A4,MN.E3],[MN.B4,MN._],[MN.A4,MN._],[MN._,MN._],
+];
+
+function scheduleMusicStep(){
+  if(!audioCtx || !musicEnabled) return;
+  while(musicNextTime < audioCtx.currentTime + 0.2){
+    const [mel, bas] = MPATTERN[musicStep % MPATTERN.length];
+    if(mel) _tone(mel, musicNextTime, MS16 * 1.6, 0.12, 'square');
+    if(bas) _tone(bas, musicNextTime, MS16 * 3.2, 0.10, 'triangle');
+    musicNextTime += MS16;
+    musicStep++;
+  }
+  musicSchedTimer = setTimeout(scheduleMusicStep, 80);
+}
+
+function startMusic(){
+  if(!audioCtx || musicSchedTimer) return;
+  musicNextTime = audioCtx.currentTime + 0.05;
+  musicStep = 0;
+  scheduleMusicStep();
+}
+
+function stopMusic(){
+  clearTimeout(musicSchedTimer);
+  musicSchedTimer = null;
+}
+
+function toggleMusic(){
+  musicEnabled = !musicEnabled;
+  const btn = document.getElementById('musicBtn');
+  if(musicEnabled){ btn.textContent = '♪ MUSIC'; startMusic(); }
+  else { btn.textContent = '🔇 MUSIC'; stopMusic(); }
+}
+
+function toggleSfx(){
+  sfxEnabled = !sfxEnabled;
+  document.getElementById('sfxBtn').textContent = sfxEnabled ? '♬ SFX' : '🔇 SFX';
+}
+
+// ── GAME LOOP ──────────────────────────────────────────────────────────────────
+function gameLoop(){
+  requestAnimationFrame(gameLoop);
+  tick++;
+
+  ctx.clearRect(0,0,W,H);
+  drawSky(); drawStars(); drawMountains(); drawClouds();
+
+  // Ground assets
+  drawShip(6, GY-28);
+  drawLauncher(56, GY-26);
+
+  // Ground targets
+  targets.forEach(t=>{ if(!t.hit) drawTarget(t); });
+
+  // ── THREATS (enemy missiles flying right→left) ──
+  for(let i=threats.length-1;i>=0;i--){
+    const th=threats[i];
+
+    if(th.exploding){
+      th.ef++;
+      drawExplosion(th.x,th.y,th.ef,th.emax);
+      if(th.ef>=th.emax) threats.splice(i,1);
+      continue;
+    }
+    if(th.missed) continue; // already past, remove after short delay
+
+    const dx=th.tx-th.x, dy=th.ty-th.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+
+    if(dist<12){
+      // Reached target — MISSED! hit our base
+      th.missed=true; th.exploding=true; totalMissed++;
+      sfxImpact();
+      logMsg(`💥 IMPACT! ${th.name} HIT BASE`,'#ff2200');
+      updateUI(); continue;
+    }
+
+    const step=Math.min(th.spd, dist);
+    th.x+=dx/dist*step; th.y+=dy/dist*step;
+    th.t++;
+
+    // Red trail
+    th.trail.push({x:th.x,y:th.y});
+    if(th.trail.length>16) th.trail.shift();
+    th.trail.forEach((tr,idx)=>{
+      const a=idx/th.trail.length;
+      ctx.fillStyle=`rgba(255,60,0,${a*0.4})`;
+      ctx.fillRect(tr.x-1,tr.y-1,3,3);
+    });
+
+    // Draw enemy sprite — always points left
+    ctx.save();
+    ctx.translate(th.x,th.y);
+    const ang=Math.atan2(dy,dx);
+    ctx.rotate(ang);
+    // Draw as left-facing missile (nose at -x)
+    ctx.fillStyle=th.col;
+    ctx.fillRect(0,-2,14,4);
+    ctx.beginPath(); ctx.moveTo(14,-2); ctx.lineTo(18,0); ctx.lineTo(14,2); ctx.fill();
+    ctx.fillRect(0,-4,4,2); ctx.fillRect(0,2,4,2);
+    ctx.fillStyle='#ffcc00'; ctx.fillRect(-5,-1,5,2);
+    ctx.fillStyle='#ff8800'; ctx.fillRect(-3,-1,3,2);
+    // Threat label above
+    ctx.restore();
+    ctx.fillStyle=th.col;
+    ctx.font='5px "Press Start 2P"';
+    ctx.fillText(th.name, th.x-20, th.y-10);
+  }
+
+  // ── PROJECTILES (our weapons) ──
+  for(let i=projectiles.length-1;i>=0;i--){
+    const p=projectiles[i];
+
+    if(p.exploding){
+      p.ef++;
+      drawExplosion(p.x,p.y,p.ef,p.emax);
+      if(p.ef>=p.emax) projectiles.splice(i,1);
+      continue;
+    }
+
+    // Jet phase
+    if(p.jetPhase){
+      p.jx += p.isDefense ? 2.5 : -3.5;
+      p.jy += (p.ty-p.jy)*0.012;
+      drawJet(p.jx,p.jy, p.isDefense?1:-1);
+      const arrived = p.isDefense ? p.jx > p.tx-100 : p.jx < p.tx+80;
+      if(arrived){
+        p.jetPhase=false; p.x=p.jx; p.y=p.jy+6;
+        p.origX=p.x; p.origY=p.y;
+      }
+      continue;
+    }
+
+    if(!p.origX){ p.origX=p.x; p.origY=p.y; }
+
+    // For interceptors — update target to current threat position
+    if(p.isDefense && p.targetThreat && !p.targetThreat.exploding){
+      p.tx=p.targetThreat.x; p.ty=p.targetThreat.y;
+    }
+
+    const dx=p.tx-p.x, dy=p.ty-p.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+
+    if(dist<12){
+      p.exploding=true;
+      if(p.isDefense){
+        // Intercept success!
+        if(p.targetThreat && !p.targetThreat.exploding){
+          p.targetThreat.exploding=true;
+          totalDowned++;
+          sfxIntercept();
+          logMsg(`✅ INTERCEPT: ${p.m.short} DOWNED ${p.targetThreat.name}`,'#00ff44');
+        }
+      } else {
+        totalHits++;
+        sfxExplosion();
+        targets.forEach(t=>{ if(!t.hit&&Math.abs(t.x+t.w/2-p.x)<45&&Math.abs(t.y-p.y)<45) t.hit=true; });
+      }
+      updateUI(); continue;
+    }
+
+    const step=Math.min(p.spd,dist);
+    p.x+=dx/dist*step; p.y+=dy/dist*step;
+    p.t++;
+
+    // Friendly trail (blue/yellow tint)
+    p.trail.push({x:p.x,y:p.y});
+    if(p.trail.length>18) p.trail.shift();
+    p.trail.forEach((tr,idx)=>{
+      const a=idx/p.trail.length;
+      ctx.fillStyle=`rgba(255,160,40,${a*0.4})`;
+      ctx.fillRect(tr.x-1,tr.y-1,3,3);
+    });
+
+    // Sprite
+    ctx.save();
+    const ang=Math.atan2(dy,dx);
+    ctx.translate(p.x,p.y); ctx.rotate(ang);
+    if(p.icon==='missile_h'){
+      drawMissileH(0,-2,p.col);
+    } else if(p.icon==='missile_v'){
+      ctx.rotate(Math.PI/2);
+      drawMissileV(-2,-14,p.col);
+    } else if(p.icon==='bomb'){
+      ctx.rotate(-ang); // bombs fall straight
+      drawBomb(-4,0,p.col);
+    } else if(p.icon==='drone'){
+      ctx.rotate(-ang);
+      drawDrone(-10,-8,p.col,p.t);
+    }
+    ctx.restore();
+  }
+
+  drawGround();
+
+  // Age out hit targets
+  for(let i=targets.length-1;i>=0;i--){
+    if(targets[i].hit){ targets[i].hf++; if(targets[i].hf>90) targets.splice(i,1); }
+  }
+
+  // HUD
+  ctx.fillStyle='rgba(0,0,0,0.65)'; ctx.fillRect(0,0,W,18);
+  ctx.font='7px "Press Start 2P"';
+  ctx.fillStyle='#ffcc00'; ctx.fillText('$'+fmt(budget),5,12);
+  ctx.fillStyle='#00ff44'; ctx.fillText('SPENT:$'+fmt(totalSpent),W/2-68,12);
+  ctx.fillStyle='#ff4444'; ctx.fillText('THREATS:'+threats.filter(t=>!t.exploding&&!t.missed).length, W-120,12);
+}
+
+// ── WAVE SPAWNING ──────────────────────────────────────────────────────────────
+function toggleWaves(){
+  if(waveRunning){
+    clearInterval(waveTimer); waveRunning=false;
+    document.getElementById('waveBtn').textContent='▶ START WAVE'; return;
+  }
+  waveRunning=true;
+  document.getElementById('waveBtn').textContent='⏹ STOP WAVE';
+  let waveCount=0;
+  waveTimer=setInterval(()=>{
+    waveCount++;
+    const n = Math.min(1+Math.floor(waveCount/3), 4); // escalating waves
+    for(let i=0;i<n;i++) setTimeout(spawnThreat, i*600);
+    logMsg(`⚠ WAVE ${waveCount}: ${n} INCOMING`,'#ff4444');
+  }, 5000);
+  spawnThreat(); // immediate first threat
+}
+
+// ── AUTO STRIKE ────────────────────────────────────────────────────────────────
+function autoDefenseStep(){
+  const liveThreats = threats.filter(th => !th.intercepted && !th.exploding && !th.missed);
+  if(!liveThreats.length) return;
+  // Intercept up to 2 threats per tick, closest to base first
+  const toIntercept = liveThreats.sort((a,b)=>a.x-b.x).slice(0,2);
+  for(const th of toIntercept){
+    const candidates = DEFENSE_MUNITIONS.filter(m =>
+      m.qty > 0 && budget >= m.cost &&
+      (m.interceptsBallistic && th.isBallistic || m.interceptsCruise && !th.isBallistic ||
+       m.id==='sm26' || m.id==='amraam' || m.id==='sidewinder')
+    );
+    if(!candidates.length) continue;
+    candidates.sort((a,b)=>a.cost-b.cost); // prefer cheapest valid interceptor
+    fireMunition(candidates[0].id, true);
+  }
+}
+
+function toggleAuto(){
+  const autoBtn = document.getElementById('autoBtn');
+  if(autoRunning){
+    clearInterval(autoTimer); clearInterval(autoDefenseTimer);
+    autoRunning=false;
+    autoBtn.textContent='▶ AUTO STRIKE'; autoBtn.classList.remove('active'); return;
+  }
+  autoRunning=true; autoBtn.textContent='⏹ STOP AUTO'; autoBtn.classList.add('active');
+  autoTimer=setInterval(()=>{
+    const aff=STRIKE_MUNITIONS.filter(m=>m.cost<=budget&&m.qty>0);
+    if(!aff.length){ toggleAuto(); logMsg('⚠ BUDGET EXHAUSTED','#ff4444'); return; }
+    const w=aff.map(m=>1/Math.log10(m.cost+10));
+    const tot=w.reduce((a,b)=>a+b,0);
+    let r=Math.random()*tot, chosen=aff[0];
+    for(let i=0;i<aff.length;i++){ r-=w[i]; if(r<=0){chosen=aff[i];break;} }
+    fireMunition(chosen.id, false);
+  }, 700);
+  autoDefenseTimer=setInterval(autoDefenseStep, 1500);
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function fmt(n){
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return Math.round(n/1e3)+'K';
+  return Math.round(n)+'';
+}
+function updateThreatBar(){
+  const live=threats.filter(t=>!t.exploding&&!t.missed).length;
+  const pct=Math.min(live/8*100,100);
+  document.getElementById('threatBar').style.width=pct+'%';
+  document.getElementById('threatVal').textContent=live+' INCOMING';
+}
+function updateUI(){
+  const pct=budget/STARTING_BUDGET;
+  document.getElementById('budgetBar').style.width=(pct*100)+'%';
+  document.getElementById('budgetVal').textContent='$'+budget.toLocaleString();
+  document.getElementById('statSpent').textContent='$'+fmt(totalSpent);
+  document.getElementById('statFired').textContent=totalFired;
+  document.getElementById('statHits').textContent=totalHits;
+  document.getElementById('statDowned').textContent=totalDowned;
+  document.getElementById('statMissed').textContent=totalMissed;
+  ALL_MUNITIONS.forEach(m=>{
+    const b=document.getElementById('btn-'+m.id); if(!b) return;
+    b.querySelector('.mqty').textContent='QTY:'+m.qty;
+    b.classList.toggle('disabled', budget<m.cost||m.qty<=0);
+  });
+  updateThreatBar();
+}
+function logMsg(msg,col='#00ff44'){
+  const log=document.getElementById('logPanel');
+  const d=document.createElement('div');
+  d.className='log-line hi'; d.style.color=col; d.textContent='> '+msg;
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+  setTimeout(()=>d.classList.remove('hi'),1200);
+  while(log.children.length>120) log.removeChild(log.firstChild);
+}
+function resetGame(){
+  budget=STARTING_BUDGET; totalSpent=0; totalFired=0; totalHits=0; totalDowned=0; totalMissed=0;
+  projectiles=[]; threats=[]; targets=[];
+  const QTY={tomahawk:319,jassm:786,harm:414,jsow:464,lucas:100,jdam:1292,atacms:86,
+              pac3:139,thaad:158,sm3:83,sm26:115,amraam:108,sidewinder:72};
+  ALL_MUNITIONS.forEach(m=>m.qty=QTY[m.id]||0);
+  document.getElementById('logPanel').innerHTML='';
+  logMsg('SYSTEM RESET — EPIC FURY READY','#ffcc00');
+  if(autoRunning) toggleAuto();
+  if(waveRunning) toggleWaves();
+  stopMusic(); if(musicEnabled) startMusic();
+  updateUI();
+}
+
+// ── BUILD BUTTONS ──────────────────────────────────────────────────────────────
+function makeIconCanvas(m){
+  const sc=document.createElement('canvas');
+  sc.width=24; sc.height=24; sc.style.imageRendering='pixelated';
+  const c=sc.getContext('2d'); c.imageSmoothingEnabled=false;
+  const cx=2,cy=8;
+  if(m.icon==='missile_h'){
+    c.fillStyle=m.col; c.fillRect(cx,cy,12,4);
+    c.beginPath();c.moveTo(cx+12,cy);c.lineTo(cx+16,cy+2);c.lineTo(cx+12,cy+4);c.fill();
+    c.fillRect(cx,cy-2,3,2); c.fillRect(cx,cy+4,3,2);
+    c.fillStyle='#ff6600';c.fillRect(cx-3,cy+1,3,2);
+    c.fillStyle='#ffcc00';c.fillRect(cx-2,cy+1,2,1);
+  } else if(m.icon==='missile_v'){
+    c.fillStyle=m.col; c.fillRect(cx+4,cy,4,12);
+    c.beginPath();c.moveTo(cx+4,cy);c.lineTo(cx+6,cy-4);c.lineTo(cx+8,cy);c.fill();
+    c.fillRect(cx+2,cy+9,2,3);c.fillRect(cx+8,cy+9,2,3);
+    c.fillStyle='#ff6600';c.fillRect(cx+4,cy+12,4,4);
+  } else if(m.icon==='bomb'){
+    c.fillStyle=m.col; c.fillRect(cx+3,cy,6,10);c.fillRect(cx+1,cy+3,10,4);
+    c.beginPath();c.moveTo(cx+3,cy+10);c.lineTo(cx+6,cy+14);c.lineTo(cx+9,cy+10);c.fill();
+    c.fillRect(cx-1,cy+7,3,4);c.fillRect(cx+10,cy+7,3,4);
+  } else if(m.icon==='drone'){
+    c.fillStyle=m.col;
+    c.fillRect(cx+3,cy+2,10,4);c.fillRect(cx,cy+3,16,3);
+    c.fillRect(cx+5,cy+5,6,4);c.fillRect(cx+4,cy+8,8,2);
+    c.fillStyle='#ff4444';c.fillRect(cx+10,cy+3,2,2);
+  }
+  return sc;
+}
+
+function buildPanel(munitions, listId, isDefense){
+  const list=document.getElementById(listId);
+  munitions.forEach(m=>{
+    const btn=document.createElement('div');
+    btn.className=`munition-btn ${isDefense?'defense-btn':'strike-btn'}`;
+    btn.id='btn-'+m.id; btn.title=m.desc||'';
+    btn.onclick=()=>fireMunition(m.id, isDefense);
+
+    const row=document.createElement('div'); row.className='mrow';
+    row.appendChild(makeIconCanvas(m));
+    const info=document.createElement('div');
+    info.innerHTML=`<div class="mname">${m.name.replace('\n','<br>')}</div>`;
+    row.appendChild(info); btn.appendChild(row);
+
+    const cost=document.createElement('div'); cost.className='mcost';
+    cost.textContent='$'+fmt(m.cost)+'/EA'; btn.appendChild(cost);
+
+    const qty=document.createElement('div'); qty.className='mqty';
+    qty.textContent='QTY:'+m.qty; btn.appendChild(qty);
+
+    list.appendChild(btn);
+  });
+}
+
+buildPanel(STRIKE_MUNITIONS, 'strikeList', false);
+buildPanel(DEFENSE_MUNITIONS, 'defenseList', true);
+
+// Init
+for(let i=0;i<4;i++) spawnTarget();
+logMsg('OPERATION EPIC FURY INITIALIZED','#ffcc00');
+logMsg('STRIKE: click left panel | INTERCEPT: click right panel','#aaaaff');
+logMsg('▶ START WAVE to spawn Iranian missiles','#ff6644');
+updateUI();
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
