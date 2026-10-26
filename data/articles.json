@@ -1,6 +1,7 @@
 {
     "title": "Article Portfolio",
     "articles": [
+        {"date": "2026-10-26", "title": "Mystery money floods US midterm election campaigns","publication": "AFP | Barron's", "url": "https://www.barrons.com/news/mystery-money-floods-us-midterm-election-campaigns-d1377cf8"},
         {"date": "2026-03-30", "title": "Stock market winners and losers one month into US-Israel war on Iran","publication": "AFP | Yahoo Finance", "url": "https://finance.yahoo.com/markets/stocks/articles/stock-market-winners-losers-one-171517604.html"},
         {"date": "2026-01-16", "title": "More migrants are dying in ICE detention under Trump","publication": "AFP | CTV News", "url": "https://www.ctvnews.ca/world/article/more-migrants-are-dying-in-ice-detention-under-trump"},
         {"date": "2025-10-23", "title": "Flush with cash, US immigration agency expands weaponry and surveillance","publication": "AFP | France24", "url": "https://www.france24.com/en/live-news/20251023-flush-with-cash-us-immigration-agency-expands-weaponry-and-surveillance"},
